@@ -4,10 +4,10 @@ import { auth } from "../src/firebaseConfig";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth";
 
 const styles = {
-  container: "flex-1 items-center justify-center bg-gray-100 p-6 border-2",
-  title: "text-3xl font-bold text-red-800 mb-6 border-2",
-  authContainer: "w-full max-w-md p-5 rounded-lg mb-6 border border-20 bg-yellow-100",
-  authTitle: "text-xl font-bold text-gray-700 mb-4 border-2",
+  container: "flex-1 items-center justify-center bg-gray-100",
+  title: "text-3xl font-bold text-red-800 mb-6",
+  authContainer: "w-full max-w-md p-5 rounded-lg mb-6 border border-20",
+  authTitle: "text-xl font-bold text-center text-gray-700 mb-4",
   input: "w-full h-12 border border-gray-300 rounded-lg px-4 mb-3",
   buttonContainer: "w-full max-w-md p-5 bg-white rounded-lg shadow-md",
   userContainer: "w-full max-w-md p-5 bg-white rounded-lg shadow-md items-center",
