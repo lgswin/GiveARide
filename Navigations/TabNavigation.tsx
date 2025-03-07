@@ -4,8 +4,8 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
 import HomeScreen from '../Screens/HomeScreen';
-import LoginScreen from '../Screens/LoginScreen';
-import SignupScreen from '../Screens/SignUpScreen';
+import ListScreen from '../Screens/ListScreen';
+import ProfileScreen from '../Screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -22,8 +22,8 @@ const TabNavigation = () => {
         }}
       />
       <Tab.Screen 
-        name="Login" 
-        component={LoginScreen} 
+        name="List" 
+        component={ListScreen} 
         options={{
             tabBarIcon: ({ color }) => (
                 <FontAwesome name="list" size={24} color={color} />
@@ -31,8 +31,8 @@ const TabNavigation = () => {
         }}
       />
       <Tab.Screen 
-        name="Signup" 
-        component={SignupScreen} 
+        name="Profile" 
+        component={ProfileScreen} 
         options={{
             tabBarIcon: ({ color }) => (
                 <AntDesign name="profile" size={24} color={color} />

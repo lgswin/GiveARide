@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./src/firebaseConfig";
 import LoginScreen from "./Screens/LoginScreen";
+import ListScreen from "./Screens/ListScreen";
 import TabNavigation from "./Navigations/TabNavigation";
 import './global.css'; // !!!! 이거 없으면 nativewind가 적용이 안됨~ !!!!
 
