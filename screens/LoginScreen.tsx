@@ -22,7 +22,6 @@ const LoginScreen = ({ navigation }: any) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       Alert.alert("로그인 성공!", "환영합니다.");
-      navigation.navigate("Home");
     } catch (error: any) {
       Alert.alert("로그인 실패", error.message);
     }
