@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Button, Alert } from "react-native";
+import { View, Text, Button, Alert } from "react-native";
 import { auth } from "../src/firebaseConfig";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 
 const styles = {
   container: "flex-1 items-center justify-start bg-gray-100 pt-20",

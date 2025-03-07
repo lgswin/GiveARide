@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./src/firebaseConfig";
 import LoginScreen from "./Screens/LoginScreen";
-import ListScreen from "./Screens/ListScreen";
+import SignupScreen from "./Screens/SignupScreen";
 import TabNavigation from "./Navigations/TabNavigation";
 import './global.css'; // !!!! 이거 없으면 nativewind가 적용이 안됨~ !!!!
 
@@ -35,7 +35,10 @@ const App: React.FC = () => {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!user ? (
-          <Stack.Screen name="Login" component={LoginScreen} />
+          <>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Signup" component={SignupScreen} />
+          </>
         ) : (
           <Stack.Screen name="Main" component={TabNavigation} />
         )}

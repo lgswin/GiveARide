@@ -14,11 +14,11 @@ const styles = {
   welcomeText: "text-2xl font-bold text-gray-800 mb-4",
 };
 
-const SignUpScreen = ({ navigation }: any) => {
+const SignupScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignUp = async () => {
+  const handleSignup = async () => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       Alert.alert("회원가입 성공!", "이메일과 비밀번호로 로그인해주세요.");
@@ -46,10 +46,10 @@ const SignUpScreen = ({ navigation }: any) => {
               value={password}
               onChangeText={setPassword}
             />
-            <Button title="회원가입" onPress={handleSignUp} />
+            <Button title="회원가입" onPress={handleSignup} />
           </View>
     </View>
   );
 };
 
-export default SignUpScreen;
+export default SignupScreen;

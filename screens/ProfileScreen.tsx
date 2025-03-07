@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, Button, Alert } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, Button, Alert } from "react-native";
 import { auth } from "../src/firebaseConfig";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 
 const styles = {
-  container: "flex-1 items-center justify-center bg-gray-100",
+  container: "flex-1 items-center justify-start bg-gray-100 pt-20",
   title: "text-3xl font-bold text-red-800 mb-6",
   authContainer: "w-full max-w-md p-5 rounded-lg mb-6 border border-20",
   authTitle: "text-xl font-bold text-center text-gray-700 mb-4",
@@ -15,39 +15,36 @@ const styles = {
 };
 
 const ProfileScreen = ({ navigation }: any) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [user, setUser] = useState<any>(null);
 
-  const handleSignUp = async () => {
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      Alert.alert("회원가입 성공!", "이메일과 비밀번호로 로그인해주세요.");
-      navigation.navigate("Login");
+      await signOut(auth);
+      Alert.alert("로그아웃 완료", "다시 로그인해주세요.");
     } catch (error: any) {
-      Alert.alert("회원가입 실패", error.message);
+      console.error("로그아웃 오류:", error.message);
     }
   };
 
   return (
     <View className={styles.container}>
-          <View className={styles.buttonContainer}>
-            <Text className={styles.authTitle}>회원가입</Text>
-            <TextInput
-              className={styles.input}
-              placeholder="이메일"
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-            />
-            <TextInput
-              className={styles.input}
-              placeholder="비밀번호"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
-            <Button title="회원가입" onPress={handleSignUp} />
-          </View>
+      <Text className={styles.title}>🚘 GiveARide 🚗</Text>
+      {!user ? (
+          <>
+          </>
+      ) : (
+        <View className={styles.userContainer}>
+          <Text className={styles.welcomeText}>환영합니다, {user.email}! 🎉</Text>
+          <Button title="로그아웃" onPress={handleLogout} />
+        </View>
+      )}
     </View>
   );
 };

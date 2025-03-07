@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, Alert } from "react-native";
+import { View, Text, TextInput, Button, Alert, TouchableOpacity } from "react-native";
 import { auth } from "../src/firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
@@ -47,6 +47,11 @@ const LoginScreen = ({ navigation }: any) => {
           onChangeText={setPassword}
         />
         <Button title="로그인" onPress={handleLogin} />
+        
+        {/* 회원가입 링크 추가 */}
+        <TouchableOpacity onPress={() => navigation.navigate("Signup")} className="mt-4">
+          <Text className="text-blue-600 text-center">계정이 없으신가요? 회원가입하기</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
