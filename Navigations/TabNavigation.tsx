@@ -3,9 +3,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
-import HomeScreen from '../screens/HomeScreen';
-import LoginScreen from '../screens/LoginScreen';
-import SignupScreen from '../screens/SignUpScreen';
+import HomeScreen from '../Screens/HomeScreen';
+import LoginScreen from '../Screens/LoginScreen';
+import SignupScreen from '../Screens/SignUpScreen';
 
 const Tab = createBottomTabNavigator();
 
