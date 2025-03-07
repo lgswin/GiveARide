@@ -29,6 +29,7 @@ const LoginScreen = ({ navigation }: any) => {
 
   return (
     <View className={styles.container}>
+      <Text className={styles.title}>🚘 GiveARide 🚗</Text>
       <View className={styles.authContainer}>
         <Text className={styles.authTitle}>로그인</Text>
         <TextInput
