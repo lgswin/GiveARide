@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, Alert } from "react-native";
 import { collection, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "../src/firebaseConfig";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 const styles = {
   container: "flex-1 items-center justify-start bg-gray-100 pt-20",
@@ -14,35 +16,37 @@ const styles = {
 const ListScreen: React.FC = () => {
   const [schedules, setSchedules] = useState<any[]>([]);
 
-  useEffect(() => {
-    const fetchSchedules = async () => {
-      try {
-        const schedulesCollection = collection(db, "schedules");
-        const scheduleSnapshot = await getDocs(schedulesCollection);
-        const scheduleList = scheduleSnapshot.docs.map(doc => {
-          const data = doc.data();
-          let formattedDate = "날짜 없음";
-          if (data.date instanceof Timestamp) {
-            formattedDate = data.date.toDate().toLocaleString();
-          } else if (typeof data.date === "string") {
-            formattedDate = new Date(data.date).toLocaleString();
-          }
+  useFocusEffect(
+    useCallback(() => {
+      const fetchSchedules = async () => {
+        try {
+          const schedulesCollection = collection(db, "schedules");
+          const scheduleSnapshot = await getDocs(schedulesCollection);
+          const scheduleList = scheduleSnapshot.docs.map(doc => {
+            const data = doc.data();
+            let formattedDate = "날짜 없음";
+            if (data.date instanceof Timestamp) {
+              formattedDate = data.date.toDate().toLocaleString();
+            } else if (typeof data.date === "string") {
+              formattedDate = new Date(data.date).toLocaleString();
+            }
 
-          return {
-            id: doc.id,
-            ...data,
-            date: formattedDate,
-          };
-        });
-        setSchedules(scheduleList);
-      } catch (error: any) {
-        console.error("스케줄 불러오기 오류:", error.message);
-        Alert.alert("불러오기 실패", "스케줄을 가져오는 중 오류가 발생했습니다.");
-      }
-    };
+            return {
+              id: doc.id,
+              ...data,
+              date: formattedDate,
+            };
+          });
+          setSchedules(scheduleList);
+        } catch (error: any) {
+          console.error("스케줄 불러오기 오류:", error.message);
+          Alert.alert("불러오기 실패", "스케줄을 가져오는 중 오류가 발생했습니다.");
+        }
+      };
 
-    fetchSchedules();
-  }, []);
+      fetchSchedules();
+    }, [])
+  );
 
   return (
     <View className={styles.container}>

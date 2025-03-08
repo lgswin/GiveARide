@@ -4,6 +4,7 @@ import { auth } from "../src/firebaseConfig";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { db } from "../src/firebaseConfig";
 import { collection, addDoc, getFirestore } from "firebase/firestore";
+import { useNavigation } from "@react-navigation/native";
 
 const styles = {
   container: "flex-1 items-center justify-start bg-gray-100 pt-20",
@@ -21,6 +22,8 @@ const HomeScreen: React.FC = () => {
   const [departure, setDeparture] = useState("");
   const [destination, setDestination] = useState("");
   const [date, setDate] = useState("");
+  const [scheduleUpdated, setScheduleUpdated] = useState(false);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -45,8 +48,8 @@ const HomeScreen: React.FC = () => {
     }
 
     try {
-      const dbInstance = getFirestore(); // ✅ Firestore 인스턴스 가져오기
-      const schedulesCollection = collection(dbInstance, "schedules"); // ✅ 컬렉션 참조 가져오기
+      const dbInstance = getFirestore();
+      const schedulesCollection = collection(dbInstance, "schedules");
 
       await addDoc(schedulesCollection, {
         departure,
@@ -55,15 +58,28 @@ const HomeScreen: React.FC = () => {
         userEmail: user?.email || "Unknown",
         createdAt: new Date(),
       });
+
       Alert.alert("등록 완료", "스케줄이 성공적으로 등록되었습니다.");
       setDeparture("");
       setDestination("");
       setDate("");
+
+      // Set flag to indicate schedule was updated
+      setScheduleUpdated(true);
     } catch (error: any) {
       console.error("스케줄 등록 오류:", error.message);
       Alert.alert("등록 실패", "스케줄을 저장하는 중 오류가 발생했습니다.");
     }
   };
+
+  // When navigating to ListScreen, reset the flag
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      setScheduleUpdated(false);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const handleLogout = async () => {
     try {
