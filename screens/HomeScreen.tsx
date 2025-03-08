@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Button, Alert } from "react-native";
+import { View, Text, Button, Alert, TextInput } from "react-native";
+import DatePicker from "react-native-ui-datepicker";
+import { format } from "date-fns";
 import { auth } from "../src/firebaseConfig";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { db } from "../src/firebaseConfig";
@@ -21,7 +23,7 @@ const HomeScreen: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [departure, setDeparture] = useState("");
   const [destination, setDestination] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(new Date());
   const [scheduleUpdated, setScheduleUpdated] = useState(false);
   const navigation = useNavigation();
 
@@ -60,7 +62,7 @@ const HomeScreen: React.FC = () => {
       Alert.alert("등록 완료", "스케줄이 성공적으로 등록되었습니다.");
       setDeparture("");
       setDestination("");
-      setDate("");
+      setDate(new Date());
 
       // Set flag to indicate schedule was updated
       setScheduleUpdated(true);
@@ -113,12 +115,19 @@ const HomeScreen: React.FC = () => {
               value={destination}
               onChangeText={setDestination}
             />
-            <TextInput
-              className={styles.input}
-              placeholder="날짜 (YYYY-MM-DD)"
-              value={date}
-              onChangeText={setDate}
-            />
+            <View>
+              <Text>날짜 선택:</Text>
+              <DatePicker
+                date={date} // ✅ Corrected prop name
+                onChange={({ date: selectedDate }) => {
+                  if (selectedDate instanceof Date) {
+                    setDate(selectedDate);
+                  }
+                }}
+                mode="single"
+              />
+              <Text>선택된 날짜: {format(date, "yyyy-MM-dd")}</Text>
+            </View>
             <Button title="등록하기" onPress={handleScheduleSubmit} />
           </View>
         </View>
