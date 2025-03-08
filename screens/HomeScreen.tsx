@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Button, Alert } from "react-native";
+import { View, Text, TextInput, Button, Alert } from "react-native";
 import { auth } from "../src/firebaseConfig";
 import { signOut, onAuthStateChanged } from "firebase/auth";
+import { db } from "../src/firebaseConfig";
+import { collection, addDoc, getFirestore } from "firebase/firestore";
 
 const styles = {
   container: "flex-1 items-center justify-start bg-gray-100 pt-20",
@@ -16,13 +18,52 @@ const styles = {
 
 const HomeScreen: React.FC = () => {
   const [user, setUser] = useState<any>(null);
+  const [departure, setDeparture] = useState("");
+  const [destination, setDestination] = useState("");
+  const [date, setDate] = useState("");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+      console.log("🔍 Firebase User Data:", JSON.stringify(currentUser, null, 2));
+      
+      if (currentUser) {
+        setUser({
+          ...currentUser,
+          displayName: currentUser.displayName || "사용자",
+        });
+      } else {
+        setUser(null);
+      }
     });
     return () => unsubscribe();
   }, []);
+  
+  const handleScheduleSubmit = async () => {
+    if (!departure || !destination || !date) {
+      Alert.alert("입력 오류", "모든 필드를 입력해주세요.");
+      return;
+    }
+
+    try {
+      const dbInstance = getFirestore(); // ✅ Firestore 인스턴스 가져오기
+      const schedulesCollection = collection(dbInstance, "schedules"); // ✅ 컬렉션 참조 가져오기
+
+      await addDoc(schedulesCollection, {
+        departure,
+        destination,
+        date,
+        userEmail: user?.email || "Unknown",
+        createdAt: new Date(),
+      });
+      Alert.alert("등록 완료", "스케줄이 성공적으로 등록되었습니다.");
+      setDeparture("");
+      setDestination("");
+      setDate("");
+    } catch (error: any) {
+      console.error("스케줄 등록 오류:", error.message);
+      Alert.alert("등록 실패", "스케줄을 저장하는 중 오류가 발생했습니다.");
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -41,8 +82,31 @@ const HomeScreen: React.FC = () => {
           </>
       ) : (
         <View className={styles.userContainer}>
-          <Text className={styles.welcomeText}>환영합니다, {user.email}! 🎉</Text>
-          <Button title="로그아웃" onPress={handleLogout} />
+          <Text className={styles.welcomeText}>환영합니다, {user.displayName}! 🎉</Text>
+          
+          {/* 스케줄 등록 UI */}
+          <View className="w-full max-w-md p-5 bg-white rounded-lg shadow-md mt-6">
+            <Text className="text-xl text-center font-bold text-gray-700 mb-4">스케줄을 등록해주세요</Text>
+            <TextInput
+              className={styles.input}
+              placeholder="출발지"
+              value={departure}
+              onChangeText={setDeparture}
+            />
+            <TextInput
+              className={styles.input}
+              placeholder="도착지"
+              value={destination}
+              onChangeText={setDestination}
+            />
+            <TextInput
+              className={styles.input}
+              placeholder="날짜 (YYYY-MM-DD)"
+              value={date}
+              onChangeText={setDate}
+            />
+            <Button title="등록하기" onPress={handleScheduleSubmit} />
+          </View>
         </View>
       )}
     </View>

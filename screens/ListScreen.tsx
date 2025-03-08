@@ -1,51 +1,69 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, Button, Alert } from "react-native";
-import { auth } from "../src/firebaseConfig";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import React, { useEffect, useState } from "react";
+import { View, Text, FlatList, Alert } from "react-native";
+import { collection, getDocs, Timestamp } from "firebase/firestore";
+import { db } from "../src/firebaseConfig";
 
 const styles = {
-  container: "flex-1 items-center justify-center bg-gray-100",
-  title: "text-3xl font-bold text-red-800 mb-6",
-  authContainer: "w-full max-w-md p-5 rounded-lg mb-6 border border-20",
-  authTitle: "text-xl font-bold text-center text-gray-700 mb-4",
-  input: "w-full h-12 border border-gray-300 rounded-lg px-4 mb-3",
-  buttonContainer: "w-full max-w-md p-5 bg-white rounded-lg shadow-md",
-  userContainer: "w-full max-w-md p-5 bg-white rounded-lg shadow-md items-center",
-  welcomeText: "text-2xl font-bold text-gray-800 mb-4",
+  container: "flex-1 items-center justify-start bg-gray-100 pt-20",
+  title: "text-3xl font-bold text-blue-800 mb-6",
+  listContainer: "w-full max-w-md p-5 bg-white rounded-lg shadow-md",
+  listItem: "p-4 border-b border-gray-300",
+  listText: "text-lg text-gray-800",
 };
 
-const ListScreen = ({ navigation }: any) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const ListScreen: React.FC = () => {
+  const [schedules, setSchedules] = useState<any[]>([]);
 
-  const handleLogin = async () => {
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      Alert.alert("로그인 성공!", "환영합니다.");
-    } catch (error: any) {
-      Alert.alert("로그인 실패", error.message);
-    }
-  };
+  useEffect(() => {
+    const fetchSchedules = async () => {
+      try {
+        const schedulesCollection = collection(db, "schedules");
+        const scheduleSnapshot = await getDocs(schedulesCollection);
+        const scheduleList = scheduleSnapshot.docs.map(doc => {
+          const data = doc.data();
+          let formattedDate = "날짜 없음";
+          if (data.date instanceof Timestamp) {
+            formattedDate = data.date.toDate().toLocaleString();
+          } else if (typeof data.date === "string") {
+            formattedDate = new Date(data.date).toLocaleString();
+          }
+
+          return {
+            id: doc.id,
+            ...data,
+            date: formattedDate,
+          };
+        });
+        setSchedules(scheduleList);
+      } catch (error: any) {
+        console.error("스케줄 불러오기 오류:", error.message);
+        Alert.alert("불러오기 실패", "스케줄을 가져오는 중 오류가 발생했습니다.");
+      }
+    };
+
+    fetchSchedules();
+  }, []);
 
   return (
     <View className={styles.container}>
-      <View className={styles.authContainer}>
-        <Text className={styles.authTitle}>로그인</Text>
-        <TextInput
-          className={styles.input}
-          placeholder="이메일"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-        />
-        <TextInput
-          className={styles.input}
-          placeholder="비밀번호"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-        <Button title="로그인" onPress={handleLogin} />
+      <Text className={styles.title}>🚖 등록된 스케줄 🚖</Text>
+      <View className={styles.listContainer}>
+        {schedules.length > 0 ? (
+          <FlatList
+            data={schedules}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View className={styles.listItem}>
+                <Text className={styles.listText}>
+                  {item.departure} → {item.destination} ({item.date})
+                </Text>
+                <Text className="text-sm text-gray-600">등록자: {item.userEmail}</Text>
+              </View>
+            )}
+          />
+        ) : (
+          <Text className="text-lg text-gray-500 text-center">등록된 스케줄이 없습니다.</Text>
+        )}
       </View>
     </View>
   );
