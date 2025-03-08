@@ -27,8 +27,6 @@ const HomeScreen: React.FC = () => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log("🔍 Firebase User Data:", JSON.stringify(currentUser, null, 2));
-      
       if (currentUser) {
         setUser({
           ...currentUser,
