@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, Alert } from "react-native";
+import { View, Text, FlatList, Alert, ScrollView } from "react-native";
 import { collection, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "../src/firebaseConfig";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
@@ -8,7 +8,7 @@ import { useCallback } from "react";
 const styles = {
   container: "flex-1 items-center justify-start bg-gray-100 pt-20",
   title: "text-3xl font-bold text-blue-800 mb-6",
-  listContainer: "w-full max-w-md p-5 bg-white rounded-lg shadow-md",
+  listContainer: "w-full max-w-md p-5 bg-white rounded-lg shadow-md flex-grow overflow-auto",
   listItem: "p-4 border-b border-gray-300",
   listText: "text-lg text-gray-800",
 };
@@ -51,24 +51,28 @@ const ListScreen: React.FC = () => {
   return (
     <View className={styles.container}>
       <Text className={styles.title}>🚖 등록된 스케줄 🚖</Text>
-      <View className={styles.listContainer}>
-        {schedules.length > 0 ? (
-          <FlatList
-            data={schedules}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View className={styles.listItem}>
-                <Text className={styles.listText}>
-                  {item.departure} → {item.destination} ({item.date})
-                </Text>
-                <Text className="text-sm text-gray-600">등록자: {item.userEmail}</Text>
-              </View>
-            )}
-          />
-        ) : (
-          <Text className="text-lg text-gray-500 text-center">등록된 스케줄이 없습니다.</Text>
-        )}
-      </View>
+      <ScrollView className="w-full max-w-md flex-1" style={{ overflowY: "auto" }}>
+        <View className={styles.listContainer}>
+          {schedules.length > 0 ? (
+            <FlatList
+              data={schedules}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <View className={styles.listItem}>
+                  <Text className={styles.listText}>
+                    {item.departure} → {item.destination} ({item.date})
+                  </Text>
+                  <Text className="text-sm text-gray-600">등록자: {item.userEmail}</Text>
+                </View>
+              )}
+              contentContainerStyle={{ paddingBottom: 20 }}
+              showsVerticalScrollIndicator={true}
+            />
+          ) : (
+            <Text className="text-lg text-gray-500 text-center">등록된 스케줄이 없습니다.</Text>
+          )}
+        </View>
+      </ScrollView>
     </View>
   );
 };
