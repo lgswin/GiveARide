@@ -6,8 +6,7 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web",
-    "deploy": "npx expo export --output-dir web-build && gh-pages -d web-build"
+    "web": "expo start --web"
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",
