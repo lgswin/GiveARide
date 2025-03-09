@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Button, Alert, TextInput } from "react-native";
 import DatePicker from "react-native-ui-datepicker";
-import { format } from "date-fns";
 import { auth } from "../src/firebaseConfig";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { db } from "../src/firebaseConfig";
 import { collection, addDoc, getFirestore } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
+import { parse, format, isValid } from "date-fns";
 
 const styles = {
   container: "flex-1 items-center justify-start bg-gray-100 pt-20",
@@ -23,7 +23,8 @@ const HomeScreen: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [departure, setDeparture] = useState("");
   const [destination, setDestination] = useState("");
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState("");
+  const [dateError, setDateError] = useState("");
   const [scheduleUpdated, setScheduleUpdated] = useState(false);
   const navigation = useNavigation();
 
@@ -40,12 +41,27 @@ const HomeScreen: React.FC = () => {
     });
     return () => unsubscribe();
   }, []);
-  
+
+  const validateDateFormat = (dateString: string): boolean => {
+    const parsedDate = parse(dateString, "yyyy-M-d H:mm", new Date());
+    return isValid(parsedDate) && format(parsedDate, "yyyy-MM-dd HH:mm") === format(parsedDate, "yyyy-MM-dd HH:mm");
+  };
+
   const handleScheduleSubmit = async () => {
     if (!departure || !destination || !date) {
       Alert.alert("입력 오류", "모든 필드를 입력해주세요.");
       return;
     }
+
+    const parsedDate = parse(date, "yyyy-M-d H:mm", new Date());
+    if (!isValid(parsedDate)) {
+      setDateError("날짜 형식이 올바르지 않습니다. (YYYY-MM-DD 00:00)");
+      return;
+    } else {
+      setDateError("");
+    }
+
+    const formattedDate = format(parsedDate, "yyyy-MM-dd HH:mm");
 
     try {
       const dbInstance = getFirestore();
@@ -54,7 +70,7 @@ const HomeScreen: React.FC = () => {
       await addDoc(schedulesCollection, {
         departure,
         destination,
-        date,
+        date: formattedDate,
         userEmail: user?.email || "Unknown",
         createdAt: new Date(),
       });
@@ -62,9 +78,7 @@ const HomeScreen: React.FC = () => {
       Alert.alert("등록 완료", "스케줄이 성공적으로 등록되었습니다.");
       setDeparture("");
       setDestination("");
-      setDate(new Date());
-
-      // Set flag to indicate schedule was updated
+      setDate("");
       setScheduleUpdated(true);
     } catch (error: any) {
       console.error("스케줄 등록 오류:", error.message);
@@ -72,7 +86,6 @@ const HomeScreen: React.FC = () => {
     }
   };
 
-  // When navigating to ListScreen, reset the flag
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       setScheduleUpdated(false);
@@ -100,7 +113,6 @@ const HomeScreen: React.FC = () => {
         <View className={styles.userContainer}>
           <Text className={styles.welcomeText}>환영합니다, {user.displayName}! 🎉</Text>
           
-          {/* 스케줄 등록 UI */}
           <View className="w-full max-w-md p-5 bg-white rounded-lg shadow-md mt-6">
             <Text className="text-xl text-center font-bold text-gray-700 mb-4">스케줄을 등록해주세요</Text>
             <TextInput
@@ -115,19 +127,13 @@ const HomeScreen: React.FC = () => {
               value={destination}
               onChangeText={setDestination}
             />
-            <View>
-              <Text>날짜 선택:</Text>
-              <DatePicker
-                date={date} // ✅ Corrected prop name
-                onChange={({ date: selectedDate }) => {
-                  if (selectedDate instanceof Date) {
-                    setDate(selectedDate);
-                  }
-                }}
-                mode="single"
-              />
-              <Text>선택된 날짜: {format(date, "yyyy-MM-dd")}</Text>
-            </View>
+            <TextInput
+              className={styles.input}
+              placeholder="날짜 (YYYY-MM-DD 00:00)"
+              value={date}
+              onChangeText={setDate}
+            />
+            {dateError ? <Text className="text-red-500">{dateError}</Text> : null}
             <Button title="등록하기" onPress={handleScheduleSubmit} />
           </View>
         </View>
