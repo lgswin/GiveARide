@@ -7,6 +7,7 @@ import { Text } from "react-native";
 import HomeScreen from '../Screens/HomeScreen';
 import ListScreen from '../Screens/ListScreen';
 import ProfileScreen from '../Screens/ProfileScreen';
+import ListScreenStackNav from './ListScreenStackNav';
 
 const Tab = createBottomTabNavigator();
 
@@ -22,7 +23,7 @@ const TabNavigation = () => {
       />
       <Tab.Screen 
         name="List" 
-        component={ListScreen} 
+        component={ListScreenStackNav} 
         options={{
             tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>📋</Text>,
         }}

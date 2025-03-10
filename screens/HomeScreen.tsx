@@ -26,6 +26,8 @@ const HomeScreen: React.FC = () => {
   const [date, setDate] = useState("");
   const [dateError, setDateError] = useState("");
   const [scheduleUpdated, setScheduleUpdated] = useState(false);
+  const [passengerCount, setPassengerCount] = useState("");
+  const [details, setDetails] = useState("");
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -48,7 +50,7 @@ const HomeScreen: React.FC = () => {
   };
 
   const handleScheduleSubmit = async () => {
-    if (!departure || !destination || !date) {
+    if (!departure || !destination || !date || !passengerCount || !details) {
       Alert.alert("입력 오류", "모든 필드를 입력해주세요.");
       return;
     }
@@ -71,14 +73,20 @@ const HomeScreen: React.FC = () => {
         departure,
         destination,
         date: formattedDate,
+        passengerCount,
+        details,
         userEmail: user?.email || "Unknown",
         createdAt: new Date(),
+        confirmed: false, // Existing confirmed flag
+        riders: [], // Added an empty array for rider nicknames
       });
 
       Alert.alert("등록 완료", "스케줄이 성공적으로 등록되었습니다.");
       setDeparture("");
       setDestination("");
       setDate("");
+      setPassengerCount("");
+      setDetails("");
       setScheduleUpdated(true);
     } catch (error: any) {
       console.error("스케줄 등록 오류:", error.message);
@@ -132,6 +140,20 @@ const HomeScreen: React.FC = () => {
               placeholder="날짜 (YYYY-MM-DD 00:00)"
               value={date}
               onChangeText={setDate}
+            />
+            <TextInput
+              className={styles.input}
+              placeholder="탑승 인원"
+              value={passengerCount}
+              onChangeText={setPassengerCount}
+              keyboardType="numeric"
+            />
+            <TextInput
+              className={styles.input}
+              placeholder="상세 내용"
+              value={details}
+              onChangeText={setDetails}
+              multiline
             />
             {dateError ? <Text className="text-red-500">{dateError}</Text> : null}
             <Button title="등록하기" onPress={handleScheduleSubmit} />

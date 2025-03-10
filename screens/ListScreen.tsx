@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, Alert, ScrollView } from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { View, Text, FlatList, ScrollView, TouchableOpacity } from "react-native";
 import { collection, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "../src/firebaseConfig";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
+import DetailScreen from './DetailScreen';
 
 const styles = {
   container: "flex-1 items-center justify-start bg-gray-100 pt-20",
@@ -15,6 +15,11 @@ const styles = {
 
 const ListScreen: React.FC = () => {
   const [schedules, setSchedules] = useState<any[]>([]);
+  const navigation = useNavigation();
+
+  const handleItemPress = (item: any) => {
+    navigation.navigate("DetailScreen", { schedule: item });
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -22,7 +27,7 @@ const ListScreen: React.FC = () => {
         try {
           const schedulesCollection = collection(db, "schedules");
           const scheduleSnapshot = await getDocs(schedulesCollection);
-          const scheduleList = scheduleSnapshot.docs.map(doc => {
+          const scheduleList = await Promise.all(scheduleSnapshot.docs.map(async (doc) => {
             const data = doc.data();
             let formattedDate = "날짜 없음";
             if (data.date instanceof Timestamp) {
@@ -31,16 +36,26 @@ const ListScreen: React.FC = () => {
               formattedDate = new Date(data.date).toLocaleString();
             }
 
+            // Fetch user nickname from Firestore
+            let nickname = "알 수 없음";
+            if (data.userEmail) {
+              const userDoc = await getDocs(collection(db, "users"));
+              const user = userDoc.docs.find(user => user.data().email === data.userEmail);
+              if (user) {
+                nickname = user.data().nickname || "알 수 없음";
+              }
+            }
+
             return {
               id: doc.id,
               ...data,
               date: formattedDate,
+              nickname,
             };
-          });
+          }));
           setSchedules(scheduleList);
         } catch (error: any) {
           console.error("스케줄 불러오기 오류:", error.message);
-          Alert.alert("불러오기 실패", "스케줄을 가져오는 중 오류가 발생했습니다.");
         }
       };
 
@@ -51,19 +66,22 @@ const ListScreen: React.FC = () => {
   return (
     <View className={styles.container}>
       <Text className={styles.title}>🚖 등록된 스케줄 🚖</Text>
-      <ScrollView className="w-full max-w-md flex-1" style={{ overflowY: "auto" }}>
+      <View className="w-full max-w-md flex-1" style={{ overflowY: "auto" }}>
         <View className={styles.listContainer}>
           {schedules.length > 0 ? (
             <FlatList
               data={schedules}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
-                <View className={styles.listItem}>
-                  <Text className={styles.listText}>
-                    {item.departure} → {item.destination} ({item.date})
-                  </Text>
-                  <Text className="text-sm text-gray-600">등록자: {item.userEmail}</Text>
-                </View>
+                <TouchableOpacity onPress={() => handleItemPress(item)}>
+                  <View className={styles.listItem}>
+                    <Text className={styles.listText}>
+                      {item.departure} → {item.destination} ({item.date}){" "}
+                      {item.confirmed ? "✅" : "❓"}
+                    </Text>
+                    <Text className="text-sm text-gray-600">등록자: {item.nickname}</Text>
+                  </View>
+                </TouchableOpacity>
               )}
               contentContainerStyle={{ paddingBottom: 20 }}
               showsVerticalScrollIndicator={true}
@@ -72,7 +90,7 @@ const ListScreen: React.FC = () => {
             <Text className="text-lg text-gray-500 text-center">등록된 스케줄이 없습니다.</Text>
           )}
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 };
