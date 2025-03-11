@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, Alert, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, Button, TouchableOpacity } from "react-native";
 import { auth } from "../src/firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
@@ -17,13 +17,24 @@ const styles = {
 const LoginScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleLogin = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      Alert.alert("로그인 성공!", "환영합니다.");
+      setErrorMessage(""); // Clear previous error on success
     } catch (error: any) {
-      Alert.alert("로그인 실패", error.message);
+      let message = "로그인 실패. 다시 시도해주세요.";
+
+      if (error.code === "auth/user-not-found") {
+        message = "사용자 정보가 없습니다. 회원가입을 진행해주세요.";
+      } else if (error.code === "auth/wrong-password") {
+        message = "비밀번호가 올바르지 않습니다.";
+      } else if (error.code === "auth/invalid-email") {
+        message = "잘못된 이메일 형식입니다.";
+      }
+
+      setErrorMessage(message);
     }
   };
 
@@ -48,7 +59,12 @@ const LoginScreen = ({ navigation }: any) => {
         />
         <Button title="로그인" onPress={handleLogin} />
         
-        {/* 회원가입 링크 추가 */}
+        {/* 오류 메시지 표시 */}
+        {errorMessage !== "" && (
+          <Text className="text-red-600 text-center mt-2">{errorMessage}</Text>
+        )}
+
+        {/* 회원가입 링크 */}
         <TouchableOpacity onPress={() => navigation.navigate("Signup")} className="mt-4">
           <Text className="text-blue-600 text-center">계정이 없으신가요? 회원가입하기</Text>
         </TouchableOpacity>

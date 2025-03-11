@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Button, Alert, Image } from "react-native";
 import { auth, db } from "../src/firebaseConfig";
 import { signOut, onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, onSnapshot } from "firebase/firestore";
 
 const styles = {
   container: "flex-1 items-center justify-start bg-gray-100 pt-20",
@@ -37,10 +37,15 @@ const ProfileScreen = ({ navigation }: any) => {
           setProfileImage(userDoc.data().profileImage || currentUser.photoURL || null);
         }
 
-        // Fetch the count of schedules created by the user
+        // Listen for real-time updates on the count of schedules created by the user
         const schedulesCollection = collection(db, "schedules");
-        const scheduleSnapshot = await getDocs(query(schedulesCollection, where("userEmail", "==", currentUser.email)));
-        setScheduleCount(scheduleSnapshot.size);
+        const schedulesQuery = query(schedulesCollection, where("userEmail", "==", currentUser.email));
+
+        const unsubscribeSchedules = onSnapshot(schedulesQuery, (snapshot) => {
+          setScheduleCount(snapshot.size);
+        });
+
+        return () => unsubscribeSchedules();
       } else {
         setUser(null);
         setPhoneNumber("");

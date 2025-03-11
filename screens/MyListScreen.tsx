@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, FlatList, ScrollView, TouchableOpacity } from "react-native";
-import { collection, getDocs, Timestamp, query, orderBy } from "firebase/firestore";
-import { db } from "../src/firebaseConfig";
+import { collection, getDocs, Timestamp, query, orderBy, where, getDoc, doc } from "firebase/firestore";
+import { db, auth } from "../src/firebaseConfig";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 // import DetailScreen from './DetailScreen';
 
@@ -13,20 +13,48 @@ const styles = {
   listText: "text-lg text-gray-800",
 };
 
-const ListScreen: React.FC = () => {
+const MyListScreen: React.FC = () => {
   const [schedules, setSchedules] = useState<any[]>([]);
   const navigation = useNavigation();
 
   const handleItemPress = (item: any) => {
-    navigation.navigate("DetailScreen", { schedule: item });
+    navigation.navigate("MyDetailScreen", { schedule: item });
   };
 
   useFocusEffect(
     useCallback(() => {
       const fetchSchedules = async () => {
         try {
+          if (!auth.currentUser) {
+            console.error("사용자가 로그인되지 않았습니다.");
+            return;
+          }
+
+          const userRef = doc(db, "users", auth.currentUser.uid);
+          const userDoc = await getDoc(userRef);
+          let isDriver = false;
+
+          if (userDoc.exists()) {
+            isDriver = userDoc.data().driver || false;
+          }
+
           const schedulesCollection = collection(db, "schedules");
-          const schedulesQuery = query(schedulesCollection, orderBy("createdAt", "desc"));
+          let schedulesQuery;
+
+          if (isDriver) {
+            schedulesQuery = query(
+              schedulesCollection,
+              where("riders", "array-contains", auth.currentUser.uid), // Show schedules where the user is a requested driver
+              orderBy("createdAt", "desc")
+            );
+          } else {
+            schedulesQuery = query(
+              schedulesCollection,
+              where("userEmail", "==", auth.currentUser.email), // Show schedules created by the user
+              orderBy("createdAt", "desc")
+            );
+          }
+
           const scheduleSnapshot = await getDocs(schedulesQuery);
           const scheduleList = await Promise.all(scheduleSnapshot.docs.map(async (doc) => {
             const data = doc.data();
@@ -43,24 +71,14 @@ const ListScreen: React.FC = () => {
               formattedCreatedAt = new Date(data.createdAt).toLocaleString();
             }
 
-            // Fetch user nickname from Firestore
-            let nickname = "알 수 없음";
-            if (data.userEmail) {
-              const userDoc = await getDocs(collection(db, "users"));
-              const user = userDoc.docs.find(user => user.data().email === data.userEmail);
-              if (user) {
-                nickname = user.data().nickname || "알 수 없음";
-              }
-            }
-
             return {
               id: doc.id,
               ...data,
               date: formattedDate,
               createdAt: formattedCreatedAt,
-              nickname,
             };
           }));
+
           setSchedules(scheduleList);
         } catch (error: any) {
           console.error("스케줄 불러오기 오류:", error.message);
@@ -73,7 +91,7 @@ const ListScreen: React.FC = () => {
 
   return (
     <View className={styles.container}>
-      <Text className={styles.title}>🚖 등록된 스케줄 🚖</Text>
+      <Text className={styles.title}>🚖 나의 스케줄 🚖</Text>
       <View className="w-full max-w-md flex-1" style={{ overflowY: "auto" }}>
         <View className={styles.listContainer}>
           {schedules.length > 0 ? (
@@ -87,7 +105,6 @@ const ListScreen: React.FC = () => {
                       {item.departure} → {item.destination} {item.confirmed === "pending" ? "⏳" : item.confirmed ? "✅" : "❓"}
                     </Text>
                     <Text className="text-sm text-gray-600">출발시간: {item.date}</Text>
-                    <Text className="text-sm text-gray-600">등록자: {item.nickname}</Text>
                     <Text className="text-xs text-gray-500">등록 시간: {item.createdAt}</Text>
                   </View>
                 </TouchableOpacity>
@@ -104,4 +121,4 @@ const ListScreen: React.FC = () => {
   );
 };
 
-export default ListScreen;
+export default MyListScreen;

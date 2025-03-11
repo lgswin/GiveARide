@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Button, TouchableOpacity } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { auth, db } from "../src/firebaseConfig";
-import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, getDoc, deleteDoc } from "firebase/firestore";
 import { Ionicons } from "@expo/vector-icons"; // Ensure you have `expo/vector-icons` installed
 
 const styles = {
@@ -17,10 +17,11 @@ const styles = {
   requestButton: "absolute bottom-6 right-6", // Move request button to bottom-right
 };
 
-const DetailScreen: React.FC = () => {
+const MyDetailScreen: React.FC = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { schedule } = route.params as { schedule: any };
+  console.log("Schedule Data:", schedule); // Log schedule object for debugging
   const [isDriver, setIsDriver] = useState(false);
   const [riderNicknames, setRiderNicknames] = useState<string[]>([]);
 
@@ -64,6 +65,38 @@ const DetailScreen: React.FC = () => {
     alert("기사 요청이 완료되었습니다.");
   };
 
+  const handleConfirmDriver = async (driverNickname: string) => {
+    if (!schedule.id) return;
+
+    const scheduleRef = doc(db, "schedules", schedule.id);
+    await updateDoc(scheduleRef, {
+      mydriver: driverNickname,
+      confirmed: true, // Final confirmation state
+    });
+
+    alert(`${driverNickname}님이 기사로 확정되었습니다.`);
+
+    // Refresh the schedule data
+    const updatedScheduleDoc = await getDoc(scheduleRef);
+    if (updatedScheduleDoc.exists()) {
+      setSchedule({ id: schedule.id, ...updatedScheduleDoc.data() });
+    }
+  };
+
+  const handleDeleteSchedule = async () => {
+    if (!schedule.id) return;
+
+    try {
+      const scheduleRef = doc(db, "schedules", schedule.id);
+      await deleteDoc(scheduleRef);
+      alert("스케줄이 삭제되었습니다.");
+      navigation.goBack(); // Return to the previous screen after deletion
+    } catch (error) {
+      console.error("스케줄 삭제 오류:", error);
+      alert("스케줄을 삭제하는 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <View className={styles.container}>
       {/* Back Button with Icon */}
@@ -103,25 +136,36 @@ const DetailScreen: React.FC = () => {
             {schedule.confirmed === "pending" ? "확정 대기중" : schedule.confirmed ? "확정" : "미확정"}
           </Text>
         </View>
-        {/* Show rider nicknames */}
-        {riderNicknames.length > 0 && (
+        <View className={styles.row}>
+          <Text className={styles.label}>나의 기사</Text>
+          <Text className={styles.value}>{schedule.confirmed ? schedule.mydriver : "미정"}</Text>
+        </View>
+        {/* Show rider list as buttons only if the schedule is pending confirmation */}
+        {schedule.userEmail === auth.currentUser?.email && riderNicknames.length > 0 && schedule.confirmed === "pending" && (
           <View className={styles.row}>
-            <Text className={styles.label}>기사 목록</Text>
-            <Text className={styles.value}>{riderNicknames.join(", ")}</Text>
+            <Text className={styles.label}>기사 선택</Text>
+            <View className="flex flex-row flex-wrap">
+              {riderNicknames.map((rider, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => handleConfirmDriver(rider)}
+                  className="bg-blue-600 px-4 py-2 m-1 rounded-lg"
+                >
+                  <Text className="text-white">{rider}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
         )}
       </View>
-
-      {/* Request Ride Button in Bottom-Right */}
-      {isDriver && (
-        <TouchableOpacity onPress={handleRequestRide} className={styles.requestButton}>
-          <View className="bg-blue-600 p-4 rounded-full shadow-lg">
-            <Text className="text-white text-lg font-bold">기사 요청</Text>
-          </View>
+      {/* Show delete button if the current user owns this schedule */}
+      {schedule.userEmail === auth.currentUser?.email && (
+        <TouchableOpacity onPress={handleDeleteSchedule} className="bg-red-600 px-6 py-3 rounded-lg mt-4">
+          <Text className="text-white text-lg font-bold">삭제</Text>
         </TouchableOpacity>
       )}
     </View>
   );
 };
 
-export default DetailScreen;
+export default MyDetailScreen;

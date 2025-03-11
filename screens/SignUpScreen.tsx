@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, Alert, Image } from "react-native";
+import { View, Text, TextInput, Button, Alert, Image, CheckBox } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { auth, db } from "../src/firebaseConfig";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
@@ -15,6 +15,7 @@ const styles = {
   buttonContainer: "w-full max-w-md p-5 bg-white rounded-lg shadow-md",
   userContainer: "w-full max-w-md p-5 bg-white rounded-lg shadow-md items-center",
   welcomeText: "text-2xl font-bold text-gray-800 mb-4",
+  buttonSpacing: "mt-2", // Adds top margin to buttons for spacing
 };
 
 const SignupScreen = ({ navigation }: any) => {
@@ -24,6 +25,7 @@ const SignupScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [profileImage, setProfileImage] = useState<string | null>(null); // Added profile image state
+  const [driver, setDriver] = useState(false); // New state for driver checkbox
   const [errors, setErrors] = useState({
     name: "",
     nickname: "",
@@ -105,6 +107,7 @@ const SignupScreen = ({ navigation }: any) => {
         phoneNumber: phoneNumber,
         email: email,
         profileImage: imageUrl,
+        driver, // Store driver status
       });
 
       Alert.alert("회원가입 성공!", "이메일과 비밀번호로 로그인해주세요.");
@@ -163,9 +166,18 @@ const SignupScreen = ({ navigation }: any) => {
           onChangeText={setPassword}
         />
         {errors.password ? <Text className="text-red-500 text-sm">{errors.password}</Text> : null}
-        <Button title="프로필 이미지 선택" onPress={pickImage} />
+        {/* Driver Checkbox */}
+        <View className="flex-row items-center mt-3">
+          <CheckBox value={driver} onValueChange={setDriver} />
+          <Text className="ml-2">운전자로 등록하기</Text>
+        </View>
+        <View className={styles.buttonSpacing}>
+          <Button title="프로필 이미지 선택" onPress={pickImage} />
+        </View>
         {profileImage && <Image source={{ uri: profileImage }} style={{ width: 100, height: 100, borderRadius: 50, marginTop: 10 }} />}
-        <Button title="회원가입" onPress={handleSignup} />
+        <View className={styles.buttonSpacing}>
+          <Button title="회원가입" onPress={handleSignup} />
+        </View>
       </View>
     </View>
   );

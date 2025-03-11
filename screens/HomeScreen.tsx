@@ -4,7 +4,7 @@ import DatePicker from "react-native-ui-datepicker";
 import { auth } from "../src/firebaseConfig";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { db } from "../src/firebaseConfig";
-import { collection, addDoc, getFirestore } from "firebase/firestore";
+import { collection, addDoc, getFirestore, getDoc, doc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { parse, format, isValid } from "date-fns";
 
@@ -68,6 +68,26 @@ const HomeScreen: React.FC = () => {
     try {
       const dbInstance = getFirestore();
       const schedulesCollection = collection(dbInstance, "schedules");
+      
+      // Retrieve user details from Firestore
+      let nickname = "알 수 없음";
+      let phoneNumber = "정보 없음";
+      let profileImage = null;
+      let mydriver = ""; // Initialize as an empty string
+
+      if (user?.uid) {
+        const userDoc = await getDoc(doc(dbInstance, "users", user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          nickname = userData.nickname || nickname;
+          phoneNumber = userData.phoneNumber || phoneNumber;
+          profileImage = userData.profileImage || profileImage;
+
+          if (userData.driver && userData.nickname) {
+            mydriver = userData.nickname; // Store driver's nickname
+          }
+        }
+      }
 
       await addDoc(schedulesCollection, {
         departure,
@@ -76,9 +96,14 @@ const HomeScreen: React.FC = () => {
         passengerCount,
         details,
         userEmail: user?.email || "Unknown",
+        userId: user?.uid || "Unknown",
+        nickname,
+        phoneNumber,
+        profileImage,
+        mydriver, // Store the driver's nickname
         createdAt: new Date(),
-        confirmed: false, // Existing confirmed flag
-        riders: [], // Added an empty array for rider nicknames
+        confirmed: false,
+        riders: [],
       });
 
       Alert.alert("등록 완료", "스케줄이 성공적으로 등록되었습니다.");
