@@ -13,7 +13,7 @@ const styles = {
   lastrow: "flex flex-row py-2",
   label: "text-lg font-semibold text-gray-700 w-1/3",
   value: "text-lg text-gray-700 flex-1",
-  backButton: "absolute top-6 left-4 p-2", // Move back button to top-left
+  backButton: "absolute top-12 left-4 p-2", // Increased top spacing to avoid status bar overlap
   requestButton: "absolute bottom-6 right-6", // Move request button to bottom-right
 };
 

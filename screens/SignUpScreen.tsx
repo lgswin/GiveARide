@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, Alert, Image, CheckBox } from "react-native";
+import { View, Text, TextInput, Button, Alert, Image, CheckBox, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { auth, db } from "../src/firebaseConfig";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
@@ -24,6 +25,7 @@ const SignupScreen = ({ navigation }: any) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState(""); // Added confirm password state
   const [profileImage, setProfileImage] = useState<string | null>(null); // Added profile image state
   const [driver, setDriver] = useState(false); // New state for driver checkbox
   const [errors, setErrors] = useState({
@@ -32,10 +34,11 @@ const SignupScreen = ({ navigation }: any) => {
     phoneNumber: "",
     email: "",
     password: "",
+    confirmPassword: "", // Added confirmPassword error state
   });
 
   const validateInputs = () => {
-    let newErrors = { name: "", nickname: "", phoneNumber: "", email: "", password: "" };
+    let newErrors = { name: "", nickname: "", phoneNumber: "", email: "", password: "", confirmPassword: "" };
     let isValid = true;
 
     if (!name) { newErrors.name = "이름을 입력해주세요."; isValid = false; }
@@ -56,6 +59,13 @@ const SignupScreen = ({ navigation }: any) => {
       if (!emailRegex.test(email)) { newErrors.email = "올바른 이메일 형식을 입력해주세요."; isValid = false; }
     }
     if (!password) { newErrors.password = "비밀번호를 입력해주세요."; isValid = false; }
+    if (!confirmPassword) { 
+      newErrors.confirmPassword = "비밀번호 확인을 입력해주세요."; 
+      isValid = false; 
+    } else if (confirmPassword !== password) {
+      newErrors.confirmPassword = "비밀번호가 일치하지 않습니다.";
+      isValid = false;
+    }
 
     setErrors(newErrors);
     return isValid;
@@ -126,6 +136,12 @@ const SignupScreen = ({ navigation }: any) => {
 
   return (
     <View className={styles.container}>
+      <TouchableOpacity 
+        style={{ position: "absolute", top: 40, left: 20, zIndex: 10 }} 
+        onPress={() => navigation.goBack()}
+      >
+        <Ionicons name="arrow-back" size={30} color="black" />
+      </TouchableOpacity>
       <View className={styles.buttonContainer}>
         <Text className={styles.authTitle}>회원가입</Text>
         <TextInput
@@ -166,6 +182,14 @@ const SignupScreen = ({ navigation }: any) => {
           onChangeText={setPassword}
         />
         {errors.password ? <Text className="text-red-500 text-sm">{errors.password}</Text> : null}
+        <TextInput
+          className={styles.input}
+          placeholder="비밀번호 확인" // Added confirm password input
+          secureTextEntry
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+        />
+        {errors.confirmPassword ? <Text className="text-red-500 text-sm">{errors.confirmPassword}</Text> : null}
         {/* Driver Checkbox */}
         <View className="flex-row items-center mt-3">
           <CheckBox value={driver} onValueChange={setDriver} />
