@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, Button, Alert, TextInput } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, Text, Button, Alert, TextInput, Platform } from "react-native";
 import DatePicker from "react-native-ui-datepicker";
 import { auth } from "../src/firebaseConfig";
 import { signOut, onAuthStateChanged } from "firebase/auth";
@@ -7,6 +7,8 @@ import { db } from "../src/firebaseConfig";
 import { collection, addDoc, getFirestore, getDoc, doc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { parse, format, isValid } from "date-fns";
+import { Modalize } from "react-native-modalize";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const styles = {
   container: "flex-1 items-center justify-start bg-gray-100 pt-20",
@@ -29,6 +31,7 @@ const HomeScreen: React.FC = () => {
   const [passengerCount, setPassengerCount] = useState("");
   const [details, setDetails] = useState("");
   const navigation = useNavigation();
+  const modalRef = useRef<Modalize>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -137,55 +140,48 @@ const HomeScreen: React.FC = () => {
   };
 
   return (
-    <View className={styles.container}>
-      <Text className={styles.title}>🚘 GiveARide 🚗</Text>
-      {!user ? (
-          <>
-          </>
-      ) : (
-        <View className={styles.userContainer}>
-          <Text className={styles.welcomeText}>환영합니다, {user.displayName}! 🎉</Text>
-          
-          <View className="w-full max-w-md p-5 bg-white rounded-lg shadow-md mt-6">
-            <Text className="text-xl text-center font-bold text-gray-700 mb-4">스케줄을 등록해주세요</Text>
-            <TextInput
-              className={styles.input}
-              placeholder="출발지"
-              value={departure}
-              onChangeText={setDeparture}
-            />
-            <TextInput
-              className={styles.input}
-              placeholder="도착지"
-              value={destination}
-              onChangeText={setDestination}
-            />
-            <TextInput
-              className={styles.input}
-              placeholder="날짜 (YYYY-MM-DD 00:00)"
-              value={date}
-              onChangeText={setDate}
-            />
-            <TextInput
-              className={styles.input}
-              placeholder="탑승 인원"
-              value={passengerCount}
-              onChangeText={setPassengerCount}
-              keyboardType="numeric"
-            />
-            <TextInput
-              className={styles.input}
-              placeholder="상세 내용"
-              value={details}
-              onChangeText={setDetails}
-              multiline
-            />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View className={styles.container}>
+        <Text className={styles.title}>🚘 GiveARide 🚗</Text>
+        {/* {!user ? (
+            <>
+            </>
+        ) : (
+          <View className={styles.userContainer}>
+            <Text className={styles.welcomeText}>환영합니다, {user.displayName}! 🎉</Text>
+            <Button title="스케줄 등록" onPress={() => modalRef.current?.open()} />
+          </View>
+        )} */}
+        <Modalize 
+          ref={modalRef} 
+          adjustToContentHeight 
+          alwaysOpen={60} 
+          modalStyle={{ 
+            backgroundColor: "#f9fdec", 
+            borderTopLeftRadius: 20, 
+            borderTopRightRadius: 20, 
+            shadowColor: "#000", 
+            shadowOffset: { width: 0, height: 4 }, 
+            shadowOpacity: 0.3, 
+            shadowRadius: 5, 
+            elevation: 5,
+            width: Platform.OS === "web" ? 600 : "90%", // Fixed size for web, 90% for mobile
+            alignSelf: "center" // Center the modal horizontally
+          }}
+        >
+          <View className="p-5">
+            <Text className="text-xl text-center font-bold text-gray-700 mb-4">스케줄 등록</Text>
+            <TextInput className={styles.input} placeholder="출발지" value={departure} onChangeText={setDeparture} />
+            <TextInput className={styles.input} placeholder="도착지" value={destination} onChangeText={setDestination} />
+            <TextInput className={styles.input} placeholder="날짜 (YYYY-MM-DD 00:00)" value={date} onChangeText={setDate} />
+            <TextInput className={styles.input} placeholder="탑승 인원" value={passengerCount} onChangeText={setPassengerCount} keyboardType="numeric" />
+            <TextInput className={styles.input} placeholder="상세 내용" value={details} onChangeText={setDetails} multiline />
             {dateError ? <Text className="text-red-500">{dateError}</Text> : null}
             <Button title="등록하기" onPress={handleScheduleSubmit} />
           </View>
-        </View>
-      )}
-    </View>
+        </Modalize>
+      </View>
+    </GestureHandlerRootView>
   );
 };
 

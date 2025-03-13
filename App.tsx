@@ -7,6 +7,7 @@ import { auth } from "./src/firebaseConfig";
 import LoginScreen from "./Screens/LoginScreen";
 import SignupScreen from "./Screens/SignupScreen";
 import TabNavigation from "./Navigations/TabNavigation";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import './global.css'; // !!!! 이거 없으면 nativewind가 적용이 안됨~ !!!!
 
 const Stack = createNativeStackNavigator();
@@ -32,18 +33,20 @@ const App: React.FC = () => {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!user ? (
-          <>
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Signup" component={SignupScreen} />
-          </>
-        ) : (
-          <Stack.Screen name="Main" component={TabNavigation} />
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          {!user ? (
+            <>
+              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="Signup" component={SignupScreen} />
+            </>
+          ) : (
+            <Stack.Screen name="Main" component={TabNavigation} />
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 };
 
