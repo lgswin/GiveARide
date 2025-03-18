@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, Alert, Image, CheckBox, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, Button, Alert, Image, TouchableOpacity, Switch } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { auth, db } from "../src/firebaseConfig";
@@ -121,7 +121,7 @@ const SignupScreen = ({ navigation }: any) => {
       });
 
       Alert.alert("회원가입 성공!", "이메일과 비밀번호로 로그인해주세요.");
-      navigation.navigate("Login");
+      // navigation.navigate("Login");
     } catch (error: any) {
       console.error("Firebase Signup Error:", error.code, error.message);
       let newErrors = { ...errors };
@@ -192,7 +192,7 @@ const SignupScreen = ({ navigation }: any) => {
         {errors.confirmPassword ? <Text className="text-red-500 text-sm">{errors.confirmPassword}</Text> : null}
         {/* Driver Checkbox */}
         <View className="flex-row items-center mt-3">
-          <CheckBox value={driver} onValueChange={setDriver} />
+        <Switch value={driver} onValueChange={setDriver} />
           <Text className="ml-2">운전자로 등록하기</Text>
         </View>
         <View className={styles.buttonSpacing}>
