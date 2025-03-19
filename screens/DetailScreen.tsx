@@ -100,7 +100,7 @@ const DetailScreen: React.FC = () => {
         <View className={styles.lastrow}>
           <Text className={styles.label}>상태</Text>
           <Text className={styles.value}>
-            {schedule.confirmed === "pending" ? "확정 대기중" : schedule.confirmed ? "확정" : "미확정"}
+            {schedule.confirmed === "pending" ? "확정 대기중" : schedule.confirmed==="yes" ? "확정" : "미확정"}
           </Text>
         </View>
         {/* Show rider nicknames */}

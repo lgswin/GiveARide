@@ -71,7 +71,7 @@ const HomeScreen: React.FC = () => {
             if (data.confirmed=='pending') {
               pendingCount++;
             }
-            if (data.confirmed ==true)
+            if (data.confirmed =="confirmed")
             {
               confirmedCount++;
             }
@@ -140,6 +140,8 @@ const HomeScreen: React.FC = () => {
         date: formattedDate,
         passengerCount,
         details,
+        confirmedDriverEmail: "",
+        confirmedDriverPhone: "",
         userEmail: user?.email || "Unknown",
         userId: user?.uid || "Unknown",
         nickname,
@@ -147,7 +149,7 @@ const HomeScreen: React.FC = () => {
         profileImage,
         mydriver, // Store the driver's nickname
         createdAt: new Date(),
-        confirmed: false,
+        confirmed: "no",
         riders: [],
       });
 

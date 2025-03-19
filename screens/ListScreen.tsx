@@ -84,7 +84,7 @@ const ListScreen: React.FC = () => {
                 <TouchableOpacity onPress={() => handleItemPress(item)}>
                   <View className={styles.listItem}>
                     <Text className={styles.listText}>
-                      {item.departure} → {item.destination} {item.confirmed === "pending" ? "⏳" : item.confirmed ? "✅" : "❓"}
+                      {item.departure} → {item.destination} {item.confirmed === "pending" ? "⏳" : item.confirmed==="yes" ? "✅" : "❓"}
                     </Text>
                     <Text className="text-sm text-gray-600">출발시간: {item.date}</Text>
                     <Text className="text-sm text-gray-600">등록자: {item.nickname}</Text>

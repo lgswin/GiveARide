@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Button, TouchableOpacity } from "react-native";
+import { View, Text, Button, TouchableOpacity, Alert } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { auth, db } from "../src/firebaseConfig";
-import { doc, updateDoc, arrayUnion, getDoc, deleteDoc } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, getDoc,getDocs,where, deleteDoc, collection, query } from "firebase/firestore";
 import { Ionicons } from "@expo/vector-icons"; // Ensure you have `expo/vector-icons` installed
 
 const styles = {
@@ -12,6 +12,7 @@ const styles = {
   row: "flex flex-row border-b border-gray-300 py-2",
   lastrow: "flex flex-row py-2",
   label: "text-lg font-semibold text-gray-700 w-1/3",
+  centerText: "text-lg font-semibold items-center justify-center",
   value: "text-lg text-gray-700 flex-1",
   backButton: "absolute top-12 left-4 p-2", // Move back button to top-left
   requestButton: "absolute bottom-6 right-6", // Move request button to bottom-right
@@ -23,6 +24,7 @@ const MyDetailScreen: React.FC = () => {
   const { schedule } = route.params as { schedule: any };
   const [isDriver, setIsDriver] = useState(false);
   const [riderNicknames, setRiderNicknames] = useState<string[]>([]);
+  const [driverContactInfo, setDriverContactInfo] = useState<{ email: string; phone: string } | null>(null);
 
   useEffect(() => {
     const checkDriverStatus = async () => {
@@ -65,21 +67,42 @@ const MyDetailScreen: React.FC = () => {
   };
 
   const handleConfirmDriver = async (driverNickname: string) => {
+    // Fetch the driver’s email and phone number based on driverNickname
+    
+    // Fetch the driver information using a different method
+    const driverQuerySnapshot = await getDocs(query(collection(db, "users"), where("nickname", "==", driverNickname)));
+    const driverDoc = driverQuerySnapshot.docs[0];
+    console.log(driverNickname, driverDoc.data().email, driverDoc.data().phoneNumber);
+    const driverContactInfo = driverDoc.exists() ? {
+      email: driverDoc.data().email || "알 수 없음",
+      phone: driverDoc.data().phoneNumber || "알 수 없음"
+    } : { email: "알 수 없음", phone: "알 수 없음" };
+
     if (!schedule.id) return;
 
     const scheduleRef = doc(db, "schedules", schedule.id);
+    console.log("update schedule", driverContactInfo);
     await updateDoc(scheduleRef, {
       mydriver: driverNickname,
-      confirmed: true, // Final confirmation state
+      confirmedDriverEmail: driverContactInfo.email,
+      confirmedDriverPhone: driverContactInfo.phone,
+      confirmed: "yes",
     });
 
     alert(`${driverNickname}님이 기사로 확정되었습니다.`);
 
-    // Refresh the schedule data
+    // Refresh the schedule confir
     const updatedScheduleDoc = await getDoc(scheduleRef);
     if (updatedScheduleDoc.exists()) {
       setSchedule({ id: schedule.id, ...updatedScheduleDoc.data() });
     }
+
+    // Show driver details pop-up
+    Alert.alert(
+      "기사 확정 완료",
+      `${driverNickname} 님이 기사로 확정되었습니다.\n안전한 이용을 위해 연락처 및 차량 정보를 확인하세요.`,
+      [{ text: "확인", onPress: () => console.log("Driver confirmed") }]
+    );
   };
 
   const handleDeleteSchedule = async () => {
@@ -129,16 +152,35 @@ const MyDetailScreen: React.FC = () => {
           <Text className={styles.label}>등록자</Text>
           <Text className={styles.value}>{schedule.nickname}</Text>
         </View>
-        <View className={styles.lastrow}>
+        <View className={styles.row}>
           <Text className={styles.label}>상태</Text>
           <Text className={styles.value}>
-            {schedule.confirmed === "pending" ? "확정 대기중" : schedule.confirmed ? "확정" : "미확정"}
+            {schedule.confirmed === "pending" ? "확정 대기중" : schedule.confirmed=== "yes" ? "확정" : "미확정"}
           </Text>
         </View>
-        <View className={styles.row}>
-          <Text className={styles.label}>나의 기사</Text>
-          <Text className={styles.value}>{schedule.confirmed ? schedule.mydriver : "미정"}</Text>
-        </View>
+        {schedule.confirmed === "yes" && schedule.mydriver && (
+        <>
+          <View className={styles.row}>
+            <Text className={styles.centerText}>😃 나의 기사에게 연락해서 일정을 확인하시기 바랍니다❗</Text>
+          </View>
+          <View className={styles.row}>
+            <Text className={styles.label}>나의 기사</Text>
+            <Text className={styles.value}>{schedule.mydriver}</Text>
+          </View>
+        </>
+        )}
+        {schedule.confirmed === "yes" && schedule.confirmedDriverEmail && (
+          <View className={styles.row}>
+            <Text className={styles.label}>기사 이메일</Text>
+            <Text className={styles.value}>{schedule.confirmedDriverEmail}</Text>
+          </View>
+        )}
+        {schedule.confirmed === "yes" && schedule.confirmedDriverPhone && (
+          <View className={styles.row}>
+            <Text className={styles.label}>기사 전화번호</Text>
+            <Text className={styles.value}>{schedule.confirmedDriverPhone}</Text>
+          </View>
+        )}
         {/* Show rider list as buttons only if the schedule is pending confirmation */}
         {schedule.userEmail === auth.currentUser?.email && riderNicknames.length > 0 && schedule.confirmed === "pending" && (
           <View className={styles.row}>
