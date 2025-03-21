@@ -6,6 +6,7 @@ import HomeScreen from '../Screens/HomeScreen';
 import ProfileScreen from '../Screens/ProfileScreen';
 import ListScreenStackNav from './ListScreenStackNav';
 import MyListScreenStackNav from './MyListScreenStackNav';
+import HomeScreenStackNav from './HomeScreenStackNav';
 
 const Tab = createBottomTabNavigator();
 
@@ -14,10 +15,11 @@ const TabNavigation = () => {
     <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen
         name="Home" 
-        component={HomeScreen} 
+        component={HomeScreenStackNav} 
         options={{
             tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🏠</Text>,
         }}
+        
       />
       <Tab.Screen 
         name="MyList" 
