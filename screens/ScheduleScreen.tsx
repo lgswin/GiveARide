@@ -1,23 +1,11 @@
+import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, Alert, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { getFirestore, collection, addDoc, doc, getDoc } from "firebase/firestore";
 import { parse, format, isValid } from "date-fns";
 import { auth } from "../src/firebaseConfig";
-import { Ionicons } from "@expo/vector-icons"; // Ensure you have `expo/vector-icons` installed
-
-const styles = {
-    container: "flex-1 items-center justify-start bg-gray-100 pt-20",
-    title: "text-3xl font-bold text-red-800 mb-6",
-    authContainer: "w-full max-w-md p-5 rounded-lg mb-6 border border-20",
-    authTitle: "text-xl font-bold text-center text-gray-700 mb-4",
-    subTitle: "text-xl font-bold text-center text-gray-700",
-    input: "w-full h-12 border border-gray-300 rounded-lg px-4 mb-3",
-    buttonContainer: "w-full max-w-md p-5 bg-white rounded-lg shadow-md",
-    shodowBox: "w-full max-w-md p-5 bg-white rounded-lg shadow-md items-center",
-    welcomeText: "text-2xl font-bold text-gray-800 mb-4",
-    backButton: "absolute top-12 left-4 p-2", // Increased top spacing to avoid status bar overlap
-  };
+import globalStyles from "../styles/globalStyles";
 
 const ScheduleScreen = () => {
   const [departure, setDeparture] = useState("");
@@ -95,22 +83,26 @@ const ScheduleScreen = () => {
   };
 
   return (
-    <View className={styles.container}>
-      <TouchableOpacity onPress={() => navigation.goBack()} className={styles.backButton}>
-        <Ionicons name="chevron-back" size={28} color="black" />
-      </TouchableOpacity>
-
-      <Text className={styles.title}>스케줄 등록</Text>
-      <View className={styles.shodowBox}>
-        <TextInput className={styles.input} placeholder="출발지" value={departure} onChangeText={setDeparture} />
-        <TextInput className={styles.input} placeholder="도착지" value={destination} onChangeText={setDestination} />
-        <TextInput className={styles.input} placeholder="날짜 (YYYY-MM-DD HH:mm)" value={date} onChangeText={setDate} />
-        <TextInput className={styles.input} placeholder="탑승 인원" value={passengerCount} onChangeText={setPassengerCount} keyboardType="numeric" />
-        <TextInput className={styles.input} placeholder="상세 내용" value={details} onChangeText={setDetails} multiline />
-        {dateError ? <Text className="text-red-500">{dateError}</Text> : null}
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f3f4f6" }}>
+      <View className={globalStyles.backContainer}>
+        {/* Back Button with Icon */}
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text className={globalStyles.backbutton}>↩</Text>
+        </TouchableOpacity>
+        <View className={globalStyles.centeredContainer}>
+          <Text className={globalStyles.title}>📌 스케줄 등록</Text>
+          <View className={globalStyles.shadowBox}>
+            <TextInput className={globalStyles.input} placeholder="출발지" value={departure} onChangeText={setDeparture} />
+            <TextInput className={globalStyles.input} placeholder="도착지" value={destination} onChangeText={setDestination} />
+            <TextInput className={globalStyles.input} placeholder="날짜 (YYYY-MM-DD HH:mm)" value={date} onChangeText={setDate} />
+            <TextInput className={globalStyles.input} placeholder="탑승 인원" value={passengerCount} onChangeText={setPassengerCount} keyboardType="numeric" />
+            <TextInput className={globalStyles.multilineInput} placeholder="상세 내용" value={details} onChangeText={setDetails} multiline />
+            {dateError ? <Text className="text-red-500">{dateError}</Text> : null}
+          </View>
+          <Button title="등록하기" onPress={handleScheduleSubmit} />
+        </View>
       </View>
-      <Button title="등록하기" onPress={handleScheduleSubmit} />
-    </View>
+    </SafeAreaView>
   );
 };
 

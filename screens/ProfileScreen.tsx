@@ -1,20 +1,10 @@
+import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect } from "react";
 import { View, Text, Button, Alert, Image } from "react-native";
 import { auth, db } from "../src/firebaseConfig";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, collection, query, where, onSnapshot } from "firebase/firestore";
-
-const styles = {
-  container: "flex-1 items-center justify-start bg-gray-100 pt-20",
-  title: "text-3xl font-bold text-red-800 mb-6",
-  authContainer: "w-full max-w-md p-5 rounded-lg mb-6 border border-20",
-  authTitle: "text-xl font-bold text-center text-gray-700 mb-4",
-  input: "w-full h-12 border border-gray-300 rounded-lg px-4 mb-3",
-  buttonContainer: "w-full max-w-md p-5 bg-white rounded-lg shadow-md",
-  userContainer: "w-full max-w-md p-5 bg-white rounded-lg shadow-md items-center mb-10",
-  userName: "text-3xl font-bold text-gray-800 ml-4", // Larger, bold, with left margin
-  userNick: "text-xl text-gray-600 ml-4", // Smaller, with left margin
-};
+import globalStyles from "../styles/globalStyles";
 
 const ProfileScreen = ({ navigation }: any) => {
   const [user, setUser] = useState<any>(null);
@@ -68,31 +58,37 @@ const ProfileScreen = ({ navigation }: any) => {
   };
 
   return (
-    <View className={styles.container}>
-      {!user ? (
-        <>
-          <Text className="text-lg text-red-500">로그인이 필요합니다.</Text>
-        </>
-      ) : (
-        <>
-          <View className="flex-row items-center mb-4">
-            {profileImage && (
-              <Image source={{ uri: profileImage }} style={{ width: 100, height: 100, borderRadius: 50, marginRight: 10 }} />
-            )}
-            <View>
-              <Text className={styles.userName}>{user.displayName || "사용자"}!</Text>
-              <Text className={styles.userNick}>{nickname}</Text>
-            </View>
-          </View>
-          <View className={styles.userContainer}>
-            <Text className="text-lg">{user.email}</Text>
-            <Text className="text-lg">{phoneNumber}</Text>
-            <Text className="text-lg">등록한 스케줄: {scheduleCount}개</Text>
-          </View>
-          <Button title="로그아웃" onPress={handleLogout} />
-        </>
-      )}
-    </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f3f4f6" }}>
+      <View className={globalStyles.backContainer}>
+        <View className={globalStyles.centeredContainer}>
+          {!user ? (
+            <>
+              <Text className="text-lg text-red-500">로그인이 필요합니다.</Text>
+            </>
+          ) : (
+            <>
+              <View className="flex-row items-center">
+                {profileImage && (
+                  <Image source={{ uri: profileImage }} style={{ width: 100, height: 100, borderRadius: 50, marginRight: 10 }} />
+                )}
+                <View>
+                  <Text className={globalStyles.leftMarginBig}>{user.displayName || "사용자"}!</Text>
+                  <Text className={globalStyles.leftMarginText}>{nickname}</Text>
+                </View>
+              </View>
+              <View className={globalStyles.shadowBox}>
+                <View className="items-center">
+                  <Text className={globalStyles.listText}>{user.email}</Text>
+                  <Text className={globalStyles.listText}>{phoneNumber}</Text>
+                  <Text className={globalStyles.listText}>등록한 스케줄: {scheduleCount}개</Text>
+                </View>
+              </View>
+              <Button title="로그아웃" onPress={handleLogout} />
+            </>
+          )}
+        </View>
+      </View>
+    </SafeAreaView>
   );
 };
 

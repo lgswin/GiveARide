@@ -1,23 +1,12 @@
+import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, Button, Alert, TextInput, Platform } from "react-native";
 import { auth } from "../src/firebaseConfig";
 import { signOut, onAuthStateChanged } from "firebase/auth";
-import { db } from "../src/firebaseConfig";
 import { collection, addDoc, getFirestore, getDoc, getDocs } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
-import { parse, format, isValid } from "date-fns";
+import globalStyles from "../styles/globalStyles";
 
-const styles = {
-  container: "flex-1 items-center justify-start bg-gray-100 pt-20",
-  title: "text-3xl font-bold text-red-800 mb-6",
-  authContainer: "w-full max-w-md p-5 rounded-lg mb-6 border border-20",
-  authTitle: "text-xl font-bold text-center text-gray-700 mb-4",
-  subTitle: "text-xl font-bold text-center text-gray-700",
-  input: "w-full h-12 border border-gray-300 rounded-lg px-4 mb-3",
-  buttonContainer: "w-full max-w-md p-5 bg-white rounded-lg shadow-md",
-  shodowBox: "w-full max-w-md p-5 bg-white rounded-lg shadow-md items-center",
-  welcomeText: "text-2xl font-bold text-gray-800 mb-4",
-};
 
 const HomeScreen: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -87,21 +76,25 @@ const HomeScreen: React.FC = () => {
   };
 
   return (
-    <View className={styles.container}>
-      <Text className={styles.title}>🚘 GiveARide 🚗</Text>
-      <View className={styles.shodowBox}>
-        <Text className={styles.subTitle}>
-          현재 등록된 스케줄: {scheduleCount}개
-        </Text>
-        <Text className={styles.subTitle}>
-          확정 대기 중인 스케줄: {pendingScheduleCount}개
-        </Text>
-        <Text className={styles.subTitle}>
-          확정된 스케줄: {confirmedScheduleCount}개
-        </Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f3f4f6" }}>
+      <View className={globalStyles.backContainer}>
+        <View className={globalStyles.centeredContainer}>
+          <Text className={globalStyles.bigTitle}>🚘 GiveARide 🚗</Text>
+          <View className={globalStyles.shadowBox}>
+            <Text className={globalStyles.subTitle}>
+              현재 등록된 스케줄: {scheduleCount}개
+            </Text>
+            <Text className={globalStyles.subTitle}>
+              확정 대기 중인 스케줄: {pendingScheduleCount}개
+            </Text>
+            <Text className={globalStyles.subTitle}>
+              확정된 스케줄: {confirmedScheduleCount}개
+            </Text>
+          </View>
+          <Button title="라이딩 요청하기" onPress={() => navigation.navigate("ScheduleScreen")} />
+        </View>
       </View>
-      <Button title="스케줄 등록하기" onPress={() => navigation.navigate("ScheduleScreen")} />
-    </View>
+    </SafeAreaView>
   );
 };
 

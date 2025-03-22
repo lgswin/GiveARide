@@ -3,19 +3,20 @@ import { View, Text, Button, TouchableOpacity, Alert } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { auth, db } from "../src/firebaseConfig";
 import { doc, updateDoc, arrayUnion, getDoc,getDocs,where, deleteDoc, collection, query } from "firebase/firestore";
-import { Ionicons } from "@expo/vector-icons"; // Ensure you have `expo/vector-icons` installed
+import globalStyles from "../styles/globalStyles";
 
 const styles = {
-  container: "flex-1 items-center justify-center bg-gray-100 p-6",
-  title: "text-2xl font-bold text-gray-800 mb-6",
-  detailContainer: "border border-gray-400 p-4 bg-white rounded-lg w-full max-w-md mb-6",
+  backContainer: "flex-1 bg-gray-100 p-6 mt-4",
+  centeredContainer: "items-center bg-gray-100 p-6",
+  title: "text-2xl font-bold text-gray-800 items-center",
+  backbutton: "text-2xl font-bold text-gray-800 item-left self-start",
+  detailContainer: "border border-gray-400 p-4 bg-white rounded-lg w-full max-w-md mt-10 mb-6",
   row: "flex flex-row border-b border-gray-300 py-2",
   lastrow: "flex flex-row py-2",
   label: "text-lg font-semibold text-gray-700 w-1/3",
   centerText: "text-lg font-semibold items-center justify-center",
   value: "text-lg text-gray-700 flex-1",
-  backButton: "absolute top-12 left-4 p-2", // Move back button to top-left
-  requestButton: "absolute bottom-6 right-6", // Move request button to bottom-right
+  requestButton: "absolute bottom-6 right-6", 
 };
 
 const MyDetailScreen: React.FC = () => {
@@ -120,91 +121,92 @@ const MyDetailScreen: React.FC = () => {
   };
 
   return (
-    <View className={styles.container}>
+    <View className={styles.backContainer}>
       {/* Back Button with Icon */}
-      <TouchableOpacity onPress={() => navigation.goBack()} className={styles.backButton}>
-        <Ionicons name="chevron-back" size={28} color="black" />
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Text className={styles.backbutton}>↩</Text>
       </TouchableOpacity>
-
-      <Text className={styles.title}>📌 스케줄 상세 정보</Text>
-      <View className={styles.detailContainer}>
-        <View className={styles.row}>
-          <Text className={styles.label}>출발지</Text>
-          <Text className={styles.value}>{schedule.departure}</Text>
-        </View>
-        <View className={styles.row}>
-          <Text className={styles.label}>도착지</Text>
-          <Text className={styles.value}>{schedule.destination}</Text>
-        </View>
-        <View className={styles.row}>
-          <Text className={styles.label}>날짜</Text>
-          <Text className={styles.value}>{schedule.date}</Text>
-        </View>
-        <View className={styles.row}>
-          <Text className={styles.label}>탑승 인원</Text>
-          <Text className={styles.value}>{schedule.passengerCount || "정보 없음"}</Text>
-        </View>
-        <View className={styles.row}>
-          <Text className={styles.label}>상세 내용</Text>
-          <Text className={styles.value}>{schedule.details || "정보 없음"}</Text>
-        </View>
-        <View className={styles.row}>
-          <Text className={styles.label}>등록자</Text>
-          <Text className={styles.value}>{schedule.nickname}</Text>
-        </View>
-        <View className={styles.row}>
-          <Text className={styles.label}>상태</Text>
-          <Text className={styles.value}>
-            {schedule.confirmed === "pending" ? "확정 대기중" : schedule.confirmed=== "yes" ? "확정" : "미확정"}
-          </Text>
-        </View>
-        {schedule.confirmed === "yes" && schedule.mydriver && (
-        <>
+      <View className={styles.centeredContainer}>
+        <Text className={styles.title}>📌 스케줄 상세 정보</Text>
+        <View className={styles.detailContainer}>  
           <View className={styles.row}>
-            <Text className={styles.centerText}>😃 나의 기사에게 연락해서 일정을 확인하시기 바랍니다❗</Text>
+            <Text className={styles.label}>출발지</Text>
+            <Text className={styles.value}>{schedule.departure}</Text>
           </View>
           <View className={styles.row}>
-            <Text className={styles.label}>나의 기사</Text>
-            <Text className={styles.value}>{schedule.mydriver}</Text>
+            <Text className={styles.label}>도착지</Text>
+            <Text className={styles.value}>{schedule.destination}</Text>
           </View>
-        </>
-        )}
-        {schedule.confirmed === "yes" && schedule.confirmedDriverEmail && (
           <View className={styles.row}>
-            <Text className={styles.label}>기사 이메일</Text>
-            <Text className={styles.value}>{schedule.confirmedDriverEmail}</Text>
+            <Text className={styles.label}>날짜</Text>
+            <Text className={styles.value}>{schedule.date}</Text>
           </View>
-        )}
-        {schedule.confirmed === "yes" && schedule.confirmedDriverPhone && (
           <View className={styles.row}>
-            <Text className={styles.label}>기사 전화번호</Text>
-            <Text className={styles.value}>{schedule.confirmedDriverPhone}</Text>
+            <Text className={styles.label}>탑승 인원</Text>
+            <Text className={styles.value}>{schedule.passengerCount || "정보 없음"}</Text>
           </View>
-        )}
-        {/* Show rider list as buttons only if the schedule is pending confirmation */}
-        {schedule.userEmail === auth.currentUser?.email && riderNicknames.length > 0 && schedule.confirmed === "pending" && (
           <View className={styles.row}>
-            <Text className={styles.label}>기사 선택</Text>
-            <View className="flex flex-row flex-wrap">
-              {riderNicknames.map((rider, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => handleConfirmDriver(rider)}
-                  className="bg-blue-600 px-4 py-2 m-1 rounded-lg"
-                >
-                  <Text className="text-white">{rider}</Text>
-                </TouchableOpacity>
-              ))}
+            <Text className={styles.label}>상세 내용</Text>
+            <Text className={styles.value}>{schedule.details || "정보 없음"}</Text>
+          </View>
+          <View className={styles.row}>
+            <Text className={styles.label}>등록자</Text>
+            <Text className={styles.value}>{schedule.nickname}</Text>
+          </View>
+          <View className={styles.row}>
+            <Text className={styles.label}>상태</Text>
+            <Text className={styles.value}>
+              {schedule.confirmed === "pending" ? "확정 대기중" : schedule.confirmed=== "yes" ? "확정" : "미확정"}
+            </Text>
+          </View>
+          {schedule.confirmed === "yes" && schedule.mydriver && (
+          <>
+            <View className={styles.row}>
+              <Text className={styles.centerText}>😃 나의 기사에게 연락해서 일정을 확인하시기 바랍니다❗</Text>
             </View>
-          </View>
+            <View className={styles.row}>
+              <Text className={styles.label}>나의 기사</Text>
+              <Text className={styles.value}>{schedule.mydriver}</Text>
+            </View>
+          </>
+          )}
+          {schedule.confirmed === "yes" && schedule.confirmedDriverEmail && (
+            <View className={styles.row}>
+              <Text className={styles.label}>기사 이메일</Text>
+              <Text className={styles.value}>{schedule.confirmedDriverEmail}</Text>
+            </View>
+          )}
+          {schedule.confirmed === "yes" && schedule.confirmedDriverPhone && (
+            <View className={styles.row}>
+              <Text className={styles.label}>기사 전화번호</Text>
+              <Text className={styles.value}>{schedule.confirmedDriverPhone}</Text>
+            </View>
+          )}
+          {/* Show rider list as buttons only if the schedule is pending confirmation */}
+          {schedule.userEmail === auth.currentUser?.email && riderNicknames.length > 0 && schedule.confirmed === "pending" && (
+            <View className={styles.row}>
+              <Text className={styles.label}>기사 선택</Text>
+              <View className="flex flex-row flex-wrap">
+                {riderNicknames.map((rider, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => handleConfirmDriver(rider)}
+                    className="bg-blue-600 px-4 py-2 m-1 rounded-lg"
+                  >
+                    <Text className="text-white">{rider}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          )}
+        </View>
+        {/* Show delete button if the current user owns this schedule */}
+        {schedule.userEmail === auth.currentUser?.email && (
+          <TouchableOpacity onPress={handleDeleteSchedule} className="bg-red-600 px-6 py-3 rounded-lg mt-4">
+            <Text className="text-white text-lg font-bold">삭제</Text>
+          </TouchableOpacity>
         )}
       </View>
-      {/* Show delete button if the current user owns this schedule */}
-      {schedule.userEmail === auth.currentUser?.email && (
-        <TouchableOpacity onPress={handleDeleteSchedule} className="bg-red-600 px-6 py-3 rounded-lg mt-4">
-          <Text className="text-white text-lg font-bold">삭제</Text>
-        </TouchableOpacity>
-      )}
     </View>
   );
 };
