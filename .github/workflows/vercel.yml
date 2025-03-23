@@ -21,6 +21,6 @@ jobs:
         run: npx expo export --output-dir web-build
 
       - name: Deploy to Vercel
-        run: npx vercel --prod --yes --confirm
+        run: npx vercel --prod --yes
         env:
-            VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
