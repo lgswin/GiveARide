@@ -2,8 +2,8 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text } from "react-native";
 
-import HomeScreen from '../Screens/HomeScreen';
-import ProfileScreen from '../Screens/ProfileScreen';
+import HomeScreen from '../screens/HomeScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 import ListScreenStackNav from './ListScreenStackNav';
 import MyListScreenStackNav from './MyListScreenStackNav';
 import HomeScreenStackNav from './HomeScreenStackNav';
