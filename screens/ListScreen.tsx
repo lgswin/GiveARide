@@ -74,12 +74,13 @@ const ListScreen: React.FC = () => {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#f3f4f6" }}>
+<SafeAreaView style={{ flex: 1 }}>
+  <View style={{ flex: 1 }}>
       <View className={globalStyles.backContainer}>
-        <View className={globalStyles.centeredContainer}>
+        <View style={{ flex: 1 }} className={globalStyles.centeredContainer}>
           <Text className={globalStyles.bigTitle}>🚖 등록된 스케줄 🚖</Text>
           {/* <View className={globalStyles.scrollWrapper}> */}
-            <View className={globalStyles.listContainer}>
+              <View style={{ flex: 1 }} className={globalStyles.listContainer}>
               {schedules.length > 0 ? (
                 <FlatList
                   data={schedules}
@@ -106,7 +107,8 @@ const ListScreen: React.FC = () => {
           {/* </View> */}
         </View>
       </View>
-    </SafeAreaView>
+    </View>
+</SafeAreaView>
   );
 };
 

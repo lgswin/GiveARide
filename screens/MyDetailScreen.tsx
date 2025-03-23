@@ -109,56 +109,93 @@ const MyDetailScreen: React.FC = () => {
           <Text className={globalStyles.title}>📌 스케줄 상세 정보</Text>
           <View className={globalStyles.detailContainer}>
             <View className={globalStyles.row}>
-              <Text className={globalStyles.label}>출발지</Text>
-              <Text className={globalStyles.value}>{schedule.departure}</Text>
+              <View className={globalStyles.col1}>
+                <Text className={globalStyles.label}>출발지</Text>
+              </View>
+              <View className={globalStyles.col2}>
+                <Text className={globalStyles.value}>{schedule.departure}</Text>
+              </View>
             </View>
             <View className={globalStyles.row}>
-              <Text className={globalStyles.label}>도착지</Text>
-              <Text className={globalStyles.value}>{schedule.destination}</Text>
+              <View className={globalStyles.col1}>
+                <Text className={globalStyles.label}>도착지</Text>
+              </View>
+              <View className={globalStyles.col2}>
+                <Text className={globalStyles.value}>{schedule.destination}</Text>
+              </View>
             </View>
             <View className={globalStyles.row}>
-              <Text className={globalStyles.label}>날짜</Text>
-              <Text className={globalStyles.value}>{schedule.date}</Text>
+              <View className={globalStyles.col1}>
+                <Text className={globalStyles.label}>날짜</Text>
+              </View>
+              <View className={globalStyles.col2}>
+                <Text className={globalStyles.value}>{schedule.date}</Text>
+              </View>
             </View>
             <View className={globalStyles.row}>
-              <Text className={globalStyles.label}>탑승 인원</Text>
-              <Text className={globalStyles.value}>{schedule.passengerCount || "정보 없음"}</Text>
+              <View className={globalStyles.col1}>
+                <Text className={globalStyles.label}>탑승 인원</Text>
+              </View>
+              <View className={globalStyles.col2}>
+                <Text className={globalStyles.value}>{schedule.passengerCount || "정보 없음"}</Text>
+              </View>
             </View>
             <View className={globalStyles.row}>
-              <Text className={globalStyles.label}>상세 내용</Text>
-              <Text className={globalStyles.value}>{schedule.details || "정보 없음"}</Text>
+              <View className={globalStyles.col1}>
+                <Text className={globalStyles.label}>상세 내용</Text>
+              </View>
+              <View className={globalStyles.col2}>
+                <Text className={globalStyles.value}>{schedule.details || "정보 없음"}</Text>
+              </View>
             </View>
             <View className={globalStyles.row}>
-              <Text className={globalStyles.label}>등록자</Text>
-              <Text className={globalStyles.value}>{schedule.nickname}</Text>
+              <View className={globalStyles.col1}>
+                <Text className={globalStyles.label}>등록자</Text>
+              </View>
+              <View className={globalStyles.col2}>
+                <Text className={globalStyles.value}>{schedule.nickname}</Text>
+              </View>
             </View>
             <View className={globalStyles.row}>
-              <Text className={globalStyles.label}>상태</Text>
-              <Text className={globalStyles.value}>
-                {schedule.confirmed === "pending" ? "확정 대기중" : schedule.confirmed=== "yes" ? "확정" : "미확정"}
-              </Text>
+              <View className={globalStyles.col1}>
+                <Text className={globalStyles.label}>상태</Text>
+              </View>
+              <View className={globalStyles.col2}>
+                <Text className={globalStyles.value}>
+                  {schedule.confirmed === "pending" ? "확정 대기중" : schedule.confirmed=== "yes" ? "확정" : "미확정"}
+                </Text>
+              </View>
             </View>
             {schedule.confirmed === "yes" && schedule.mydriver && (
               <>
                 <View className={globalStyles.row}>
-                  <Text className={globalStyles.centerText}>😃 나의 기사에게 연락해서 일정을 확인하시기 바랍니다❗</Text>
-                </View>
-                <View className={globalStyles.row}>
-                  <Text className={globalStyles.label}>나의 기사</Text>
-                  <Text className={globalStyles.value}>{schedule.mydriver}</Text>
+                  <View className={globalStyles.col1}>
+                    <Text className={globalStyles.label}>나의 기사</Text>
+                  </View>
+                  <View className={globalStyles.col2}>
+                    <Text className={globalStyles.value}>{schedule.mydriver}</Text>
+                  </View>
                 </View>
               </>
             )}
             {schedule.confirmed === "yes" && schedule.confirmedDriverEmail && (
               <View className={globalStyles.row}>
-                <Text className={globalStyles.label}>기사 이메일</Text>
-                <Text className={globalStyles.value}>{schedule.confirmedDriverEmail}</Text>
+                <View className={globalStyles.col1}>
+                  <Text className={globalStyles.label}>기사 이메일</Text>
+                </View>
+                <View className={globalStyles.col2}>
+                  <Text className={globalStyles.value}>{schedule.confirmedDriverEmail}</Text>
+                </View>
               </View>
             )}
             {schedule.confirmed === "yes" && schedule.confirmedDriverPhone && (
               <View className={globalStyles.row}>
-                <Text className={globalStyles.label}>기사 전화번호</Text>
-                <Text className={globalStyles.value}>{schedule.confirmedDriverPhone}</Text>
+                <View className={globalStyles.col1}>
+                  <Text className={globalStyles.label}>기사 전화번호</Text>
+                </View>
+                <View className={globalStyles.col2}>
+                  <Text className={globalStyles.value}>{schedule.confirmedDriverPhone}</Text>
+                </View>
               </View>
             )}
             {schedule.userEmail === auth.currentUser?.email && riderNicknames.length > 0 && schedule.confirmed === "pending" && (

@@ -1,6 +1,6 @@
 const globalStyles = {
     backContainer: "flex-1 bg-gray-100 mt-8",
-    centeredContainer: "items-center bg-gray-100 p-6",
+    centeredContainer: "flex-1 items-center bg-gray-100 p-6",
     title: "text-2xl font-bold text-gray-800 items-center",
     backbutton: "text-2xl font-bold text-gray-800 self-start mt-6",
     shadowBox: "w-full max-w-md p-4 bg-white rounded-lg shadow-md mt-4 mb-4",
@@ -8,8 +8,10 @@ const globalStyles = {
     centerText: "text-lg font-semibold items-center justify-center",
     detailContainer: "border border-gray-400 p-4 bg-white rounded-lg w-full max-w-md mb-6",
     row: "flex flex-row items-start border-b border-gray-300 py-2",
-    label: "text-lg font-semibold text-gray-700 w-1/3",
-    value: "text-lg text-gray-700 flex-1",
+    col1: "w-1/3",
+    col2: "w-2/3",
+    label: "text-lg font-semibold text-gray-700",
+    value: "text-lg text-gray-700",
     requestButton: "absolute bottom-6 right-6",
     input: "w-full h-12 border border-gray-300 rounded-lg p-4 mb-3",
     multilineInput: "w-full h-48 border border-gray-300 rounded-lg p-4 mb-3 text-start",
@@ -23,6 +25,7 @@ const globalStyles = {
     leftMarginBig: "text-3xl font-bold text-gray-800 ml-4",
     container: "flex-1 items-center justify-center bg-gray-100 p-6",
     backButton: "absolute top-12 left-4 p-2",
+    scrollView: "flex-1 bg-gray-100", // Added for ScrollView background
 };  
 
 export default globalStyles;
