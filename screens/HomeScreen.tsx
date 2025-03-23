@@ -7,7 +7,6 @@ import { collection, addDoc, getFirestore, getDoc, getDocs } from "firebase/fire
 import { useNavigation } from "@react-navigation/native";
 import globalStyles from "../styles/globalStyles";
 
-
 const HomeScreen: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [scheduleCount, setScheduleCount] = useState(0);
@@ -80,6 +79,7 @@ const HomeScreen: React.FC = () => {
       <View className={globalStyles.backContainer}>
         <View className={globalStyles.centeredContainer}>
           <Text className={globalStyles.bigTitle}>🚘 GiveARide 🚗</Text>
+          
           <View className={globalStyles.shadowBox}>
             <Text className={globalStyles.subTitle}>
               현재 등록된 스케줄: {scheduleCount}개
@@ -92,6 +92,25 @@ const HomeScreen: React.FC = () => {
             </Text>
           </View>
           <Button title="라이딩 요청하기" onPress={() => navigation.navigate("ScheduleScreen")} />
+          
+          {/* Guide Section */}
+          <View className={globalStyles.shadowBox}>
+            <Text className="text-lg font-bold text-gray-800 mb-2">📱 앱 사용 가이드</Text>
+            <Text className="text-gray-600 mb-2">1. 👥 승객: 스케줄 등록 및 라이딩 요청하기</Text>
+            <Text className="text-gray-600 ml-4 mb-1">• 홈 화면의 '라이딩 요청하기' 버튼을 눌러 새로운 스케줄을 등록합니다</Text>
+            <Text className="text-gray-600 ml-4 mb-1">• 출발지, 도착지, 날짜, 시간 등을 입력합니다</Text>
+            <Text className="text-gray-600 ml-4 mb-2">• 등록된 스케줄은 '내 스케줄' 탭에서 확인할 수 있습니다</Text>
+            
+            <Text className="text-gray-600 mb-2">2. 🚗 기사: 스케줄 찾기</Text>
+            <Text className="text-gray-600 ml-4 mb-1">• List 화면에서 등록된 스케줄을 확인합니다</Text>
+            <Text className="text-gray-600 ml-4 mb-1">• 스케줄을 선택하여 상세 정보를 확인합니다</Text>
+            <Text className="text-gray-600 ml-4 mb-2">• '기사 요청' 버튼을 눌러 라이딩 기사로 등록합니다</Text>
+            
+            <Text className="text-gray-600 mb-2">3. ✅ 승인 및 확정</Text>
+            <Text className="text-gray-600 ml-4 mb-1">• 승객은 기사 요청을 확인하고 원하는 기사의 버튼을 눌러 승인할 수 있습니다.</Text>
+            <Text className="text-gray-600 ml-4 mb-1">• 승객이 기사를 승인하면 해당 기사의 연락처가 상세화면에 업데이트 되고 연락할 수 있습니다.</Text>
+            <Text className="text-gray-600 ml-4">• 확정된 스케줄은 '내 스케줄' 탭에서 관리됩니다</Text>
+          </View>
         </View>
       </View>
     </SafeAreaView>

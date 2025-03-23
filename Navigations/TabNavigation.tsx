@@ -24,6 +24,7 @@ const TabNavigation = () => {
       <Tab.Screen 
         name="MyList" 
         component={MyListScreenStackNav} 
+        
         options={{
             tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>📋</Text>,
         }}

@@ -7,9 +7,9 @@ const globalStyles = {
     lastrow: "flex flex-row py-2",
     centerText: "text-lg font-semibold items-center justify-center",
     detailContainer: "border border-gray-400 p-4 bg-white rounded-lg w-full max-w-md mb-6",
-    row: "flex flex-row items-start border-b border-gray-300 py-2 gap-2",
-    label: "text-lg font-semibold text-gray-700 w-1/4 text-right pr-4",
-    value: "text-lg text-gray-900 w-3/4 pt-1",
+    row: "flex flex-row items-start border-b border-gray-300 py-2",
+    label: "text-lg font-semibold text-gray-700 w-1/3",
+    value: "text-lg text-gray-700 flex-1",
     requestButton: "absolute bottom-6 right-6",
     input: "w-full h-12 border border-gray-300 rounded-lg p-4 mb-3",
     multilineInput: "w-full h-48 border border-gray-300 rounded-lg p-4 mb-3 text-start",
@@ -21,6 +21,8 @@ const globalStyles = {
     scrollWrapper: "w-full max-w-md flex-1 overflow-y-auto",
     leftMarginText: "text-xl text-gray-600 ml-4", // Larger, bold, with left margin
     leftMarginBig: "text-3xl font-bold text-gray-800 ml-4",
+    container: "flex-1 items-center justify-center bg-gray-100 p-6",
+    backButton: "absolute top-12 left-4 p-2",
 };  
 
 export default globalStyles;
