@@ -7,7 +7,6 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build": "tailwindcss -i ./input.css -o ./output.css --minify"
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",
