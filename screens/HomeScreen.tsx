@@ -1,9 +1,9 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import React, { useState, useEffect, useRef } from "react";
-import { View, Text, Button, Alert, TextInput, Platform } from "react-native";
+import React, { useState, useEffect, } from "react";
+import { View, Text, Button, Alert, TouchableOpacity } from "react-native";
 import { auth } from "../src/firebaseConfig";
 import { signOut, onAuthStateChanged } from "firebase/auth";
-import { collection, addDoc, getFirestore, getDoc, getDocs } from "firebase/firestore";
+import { collection, getFirestore,  getDocs } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import globalStyles from "../styles/globalStyles";
 
@@ -91,7 +91,12 @@ const HomeScreen: React.FC = () => {
               확정된 스케줄: {confirmedScheduleCount}개
             </Text>
           </View>
-          <Button title="라이딩 요청하기" onPress={() => navigation.navigate("ScheduleScreen")} />
+          {/* <Button title="라이딩 요청하기" onPress={() => navigation.navigate("ScheduleScreen")} /> */}
+          <TouchableOpacity onPress={() => navigation.navigate("ScheduleScreen")} className="relative inline-block px-8 py-3 font-medium w-full max-w-md group flex items-center justify-center">
+            <View className="absolute inset-0 w-full h-full transition duration-200 ease-out transform translate-x-1 translate-y-1 bg-black group-hover:-translate-x-0 group-hover:-translate-y-0" />
+            <View className="absolute inset-0 w-full h-full bg-white border-2 border-black group-hover:bg-black" />
+            <Text className="relative text-lg text-black group-hover:text-white">+ 스케줄 추가</Text>
+          </TouchableOpacity>
           
           {/* Guide Section */}
           <View className={globalStyles.shadowBox}>

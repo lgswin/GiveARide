@@ -6,14 +6,6 @@ import { db, auth } from "../src/firebaseConfig";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import globalStyles from "../styles/globalStyles";
 
-// const styles = {
-//   container: "flex-1 items-center justify-start bg-gray-100 pt-20",
-//   title: "text-3xl font-bold text-blue-800 mb-6",
-//   listContainer: "w-full max-w-md p-5 bg-white rounded-lg shadow-md flex-grow overflow-auto",
-//   listItem: "p-4 border-b border-gray-300",
-//   listText: "text-lg text-gray-800",
-// };
-
 const MyListScreen: React.FC = () => {
   const [schedules, setSchedules] = useState<any[]>([]);
   const navigation = useNavigation();
@@ -94,33 +86,35 @@ const MyListScreen: React.FC = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f3f4f6" }}>
       <View className={globalStyles.backContainer}>
         <View className={globalStyles.centeredContainer}>
-          <Text className={globalStyles.bigTitle}>🚖 나의 스케줄 🚖</Text>
-          {/* <View className={globalStyles.scrollWrapper}> */}
-            <View className={globalStyles.listContainer}>
-              {schedules.length > 0 ? (
-                <FlatList
-                  data={schedules}
-                  keyExtractor={(item) => item.id}
-                  renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => handleItemPress(item)}>
-                      <View className={globalStyles.listItem}>
-                        <Text className={globalStyles.listText}>
-                          {item.departure} → {item.destination} {item.confirmed === "pending" ? "⏳" : item.confirmed==="yes" ? "✅" : "❓"}
-                        </Text>
-                        <Text className="text-sm text-gray-600">출발시간: {item.date}</Text>
-                        <Text className="text-xs text-gray-500">등록 시간: {item.createdAt}</Text>
-                      </View>
-                    </TouchableOpacity>
-                  )}
-                  contentContainerStyle={{ paddingBottom: 20 }}
-                  showsVerticalScrollIndicator={true}
-                />
-              ) : (
-                <Text className={globalStyles.listText}>등록된 스케줄이 없습니다.</Text>
-              )}
-            </View>
+          <TouchableOpacity onPress={() => navigation.navigate("ScheduleScreen")} className="relative inline-block px-8 py-3 font-medium w-full max-w-md group flex items-center justify-center">
+            <View className="absolute inset-0 w-full h-full transition duration-200 ease-out transform translate-x-1 translate-y-1 bg-black group-hover:-translate-x-0 group-hover:-translate-y-0" />
+            <View className="absolute inset-0 w-full h-full bg-white border-2 border-black group-hover:bg-black" />
+            <Text className="relative text-lg text-black group-hover:text-white">+ 스케줄 추가</Text>
+          </TouchableOpacity>
+          <View className={globalStyles.listContainer}>
+            {schedules.length > 0 ? (
+              <FlatList
+                data={schedules}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => handleItemPress(item)}>
+                    <View className={globalStyles.listItem}>
+                      <Text className={globalStyles.listText}>
+                        {item.departure} → {item.destination} {item.confirmed === "pending" ? "⏳" : item.confirmed==="yes" ? "✅" : "❓"}
+                      </Text>
+                      <Text className="text-sm text-gray-600">출발시간: {item.date}</Text>
+                      <Text className="text-xs text-gray-500">등록 시간: {item.createdAt}</Text>
+                    </View>
+                  </TouchableOpacity>
+                )}
+                contentContainerStyle={{ paddingBottom: 20 }}
+                showsVerticalScrollIndicator={true}
+              />
+            ) : (
+              <Text className={globalStyles.listText}>등록된 스케줄이 없습니다.</Text>
+            )}
           </View>
-        {/* </View> */}
+        </View>
       </View>
     </SafeAreaView>
   );

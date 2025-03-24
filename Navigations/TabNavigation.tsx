@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text } from "react-native";
 
-import HomeScreen from '../screens/HomeScreen';
+import TestScreen from '../screens/TestScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import ListScreenStackNav from './ListScreenStackNav';
 import MyListScreenStackNav from './MyListScreenStackNav';
@@ -41,6 +41,13 @@ const TabNavigation = () => {
         component={ProfileScreen} 
         options={{
             tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>👤</Text>,
+        }}
+      />
+            <Tab.Screen 
+        name="Test" 
+        component={TestScreen} 
+        options={{
+            tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>test</Text>,
         }}
       />
     </Tab.Navigator>
