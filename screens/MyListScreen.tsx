@@ -91,7 +91,7 @@ const MyListScreen: React.FC = () => {
             <View className="absolute inset-0 w-full h-full bg-white border-2 border-black group-hover:bg-black" />
             <Text className="relative text-lg text-black group-hover:text-white">+ 스케줄 추가</Text>
           </TouchableOpacity>
-          <View className={globalStyles.listContainer}>
+          <View  style={{ flex: 1 }} className={globalStyles.listContainer}>
             {schedules.length > 0 ? (
               <FlatList
                 data={schedules}

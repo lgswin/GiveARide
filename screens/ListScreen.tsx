@@ -79,7 +79,7 @@ const ListScreen: React.FC = () => {
   <View style={{ flex: 1 }}>
       <View className={globalStyles.backContainer}>
         <View style={{ flex: 1 }} className={globalStyles.centeredContainer}>
-          <Text className={globalStyles.bigTitle}>🚖 등록된 스케줄 🚖</Text>
+          <Text className={globalStyles.bigTitle}>👍 대기중인 스케줄 🚕</Text>
           {/* <View className={globalStyles.scrollWrapper}> */}
               <View style={{ flex: 1 }} className={globalStyles.listContainer}>
               {schedules.length > 0 ? (
