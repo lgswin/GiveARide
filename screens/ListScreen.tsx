@@ -63,7 +63,8 @@ const ListScreen: React.FC = () => {
               nickname,
             };
           }));
-          setSchedules(scheduleList);
+          const filteredList = scheduleList.filter(item => item.confirmed !== "yes");
+          setSchedules(filteredList);
         } catch (error: any) {
           console.error("스케줄 불러오기 오류:", error.message);
         }
