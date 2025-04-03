@@ -1,9 +1,11 @@
 const globalStyles = {
     backContainer: "flex-1 bg-gray-100 mt-8",
     centeredContainer: "flex-1 items-center bg-gray-100 p-6",
+    rowContainer: "flex-row justify-around",
     title: "text-2xl font-bold text-gray-800 items-center",
     backbutton: "text-2xl font-bold text-gray-800 self-start mt-6",
     shadowBox: "w-full max-w-md p-4 bg-white rounded-lg shadow-md mt-4 mb-4",
+    shadowBox1_3: "p-4 bg-white rounded-lg shadow-md mt-4 mb-4 w-1/4",
     lastrow: "flex flex-row py-2",
     centerText: "text-lg font-semibold items-center justify-center",
     detailContainer: "border border-gray-400 p-4 bg-white rounded-lg w-full max-w-md mb-6",

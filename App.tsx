@@ -33,19 +33,21 @@ const App: React.FC = () => {
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer>
-        <Stack.Navigator id={undefined} screenOptions={{ headerShown: false }}>
-          {!user ? (
-            <>
-              <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="Signup" component={SignupScreen} />
-            </>
-          ) : (
-            <Stack.Screen name="Main" component={TabNavigation} />
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
+    <GestureHandlerRootView className="flex-1 items-center bg-white px-4">
+      <View className="w-full max-w-screen-md flex-1">
+        <NavigationContainer>
+          <Stack.Navigator id={undefined} screenOptions={{ headerShown: false }}>
+            {!user ? (
+              <>
+                <Stack.Screen name="Login" component={LoginScreen} />
+                <Stack.Screen name="Signup" component={SignupScreen} />
+              </>
+            ) : (
+              <Stack.Screen name="Main" component={TabNavigation} />
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </View>
     </GestureHandlerRootView>
   );
 };

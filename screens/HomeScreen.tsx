@@ -75,22 +75,41 @@ const HomeScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#f3f4f6" }}>
-      <View className={globalStyles.backContainer}>
+    <SafeAreaView className="flex-1 items-center bg-gray-100 px-4">
+      <View className={`${globalStyles.backContainer} w-full max-w-screen-md`}>
         <View className={globalStyles.centeredContainer}>
-          <Text className={globalStyles.bigTitle}>🚘 GiveARide 🚗</Text>
           
-          <View className={globalStyles.shadowBox}>
-            <Text className={globalStyles.subTitle}>
-              현재 등록된 스케줄: {scheduleCount}개
-            </Text>
-            <Text className={globalStyles.subTitle}>
-              확정 대기 중인 스케줄: {pendingScheduleCount}개
-            </Text>
-            <Text className={globalStyles.subTitle}>
-              확정된 스케줄: {confirmedScheduleCount}개
-            </Text>
+          <Text className={globalStyles.bigTitle}>🚘 GiveARide 🚗</Text>
+
+          <View className={globalStyles.rowContainer}>
+            <View className={globalStyles.shadowBox1_3}>
+              <Text className={globalStyles.subTitle}>
+                현재
+              </Text>
+              <Text className={globalStyles.subTitle}>
+                {scheduleCount}개
+              </Text>
+            </View>
+
+            <View className={globalStyles.shadowBox1_3}>
+              <Text className={globalStyles.subTitle}>
+                대기
+              </Text>
+              <Text className={globalStyles.subTitle}>
+                {pendingScheduleCount}개
+              </Text>
+            </View>
+
+            <View className={globalStyles.shadowBox1_3}>
+              <Text className={globalStyles.subTitle}>
+                확정
+              </Text>
+              <Text className={globalStyles.subTitle}>
+                {confirmedScheduleCount}개
+              </Text>
+            </View>
           </View>
+
           {/* <Button title="라이딩 요청하기" onPress={() => navigation.navigate("ScheduleScreen")} /> */}
           <TouchableOpacity onPress={() => navigation.navigate("ScheduleScreen")} className="relative inline-block px-8 py-3 font-medium w-full max-w-md group flex items-center justify-center">
             <View className="absolute inset-0 w-full h-full transition duration-200 ease-out transform translate-x-1 translate-y-1 bg-black group-hover:-translate-x-0 group-hover:-translate-y-0" />
